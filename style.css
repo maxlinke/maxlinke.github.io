@@ -1,0 +1,23 @@
+*, *::before, *::after{
+	box-sizing: border-box;
+}
+
+html{
+	background-color: #101010;
+	font-family: sans-serif;
+}
+
+body{
+	max-width: 80em;
+	display: block;
+	margin: auto;
+	padding: 0 1em;
+}
+
+h1, p{
+	color: white;
+}
+
+a{
+	color: #48f;
+}
