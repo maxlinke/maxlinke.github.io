@@ -5,6 +5,7 @@
 html{
 	background-color: #101010;
 	font-family: sans-serif;
+	text-align: center;
 }
 
 body{
@@ -20,4 +21,5 @@ h1, p{
 
 a{
 	color: #48f;
+	display: block;
 }

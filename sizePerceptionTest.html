@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>VC4-Ü1</title>
+
+    <template id="testInputsTemplate">
+        <section id="testInputs">
+            <p id="sliderLabel">Perceived size ratio</p>
+            <div id="sliderGroup">
+                <button class="sliderNudgeButton" id="leftNudgeButton">-</button>
+                <input id="slider" type="range" min="0" max="2" value="1" step="0.001">
+                <button class="sliderNudgeButton" id="rightNudgeButton">+</button>
+            </div>
+            <p id="sliderRatio">X:X</p>
+            <div id="submitArea">
+                <button id="submitButton">Submit</button>
+            </div>
+        </section>
+    </template>
+
+    <template id="resultsTemplate">
+        <section id="results">
+            <p id="resultsLabel">Your result</p>
+            <p id="resultsOutput">x = value</p>
+        </section>
+    </template>
+</head>
+
+<body>
+    <p id="testCounter">Test Counter</p>
+    <canvas id="myCanvas" width="640" height="360"></canvas>
+
+    <script>
+        const totalNumberOfTests = 20;
+        const testCategoryLength = 5;
+        const minLinearSizeRatio = 1.25;
+        const maxLinearSizeRatio = 6.5;
+        const randomRatioDistribution = 3;  // 1 is linear, <1 gives bigger/smaller ratios more often, >1 makes the ratios tend around 1:1
+        const displayedRatioPrecision = 100;
+        const sliderValueScaling = 10;
+        const nudgeDelta = 0.002;
+
+        const drawVariance = 0.3;  // overall scaling multiplier, to make direct comparisons a bit more difficult
+        const defaultSpaceWidthFraction = 0.15;
+        const defaultWidthFraction = 0.65;
+
+        const resultsReferenceLineLeftMargin = 50;
+        const resultsReferenceLineRightMargin = 50;
+        const resultsBarsMargin = 50;
+        const resultsBarEndCircleRadius = 5;
+
+        const testGeometryStrokeWidth = 5;
+        const circleColor = "rgb(199, 21, 133)";
+        const squareColor = "rgb(21, 133, 199)";
+        const averageLineColor = "rgb(255, 199, 73)";
+
+        const resultsBaseLineStrokeWidth = 3;
+        const resultsBoundaryLineStrokeWidth = 1;
+        const resultsBarStrokeWidth = 2;
+
+        let performedTestCount = 0;
+        let currentDisplayedAreaRatio = 1;
+        let currentPerceivedAreaRatio = 1;
+        let drawCircles = false;
+        let drawSquares = false;
+        const testResults = [];
+        const testXValues = [];
+        let averageXValue = 0;
+
+        document.querySelector("body").append(document.querySelector("#testInputsTemplate").content.cloneNode(true).firstElementChild);
+
+        const testCounter = document.getElementById("testCounter");
+        const sliderRatioLabel = document.getElementById("sliderRatio");
+        const leftNudgeButton = document.getElementById("leftNudgeButton");
+        const rightNudgeButton = document.getElementById("rightNudgeButton");
+        leftNudgeButton.onclick = onNudgeButtonPressed;
+        rightNudgeButton.onclick = onNudgeButtonPressed;
+        const slider = document.getElementById("slider");
+        slider.oninput = onSliderValueChanged;
+
+        const submitButton = document.getElementById("submitButton");
+        submitButton.onclick = onSubmitClicked;
+
+        const canvas = document.getElementById("myCanvas");
+        const ctx = canvas.getContext("2d");
+        let verhealtnis = 1;
+
+        nextTest();
+
+        document.addEventListener("keydown", function (event) {
+            if (performedTestCount < totalNumberOfTests) {
+                if (event.keyCode == 37) {        // left arrow
+                    nudgeSliderValue(-nudgeDelta);
+                } else if (event.keyCode == 39) {  // right arrow
+                    nudgeSliderValue(nudgeDelta);
+                } else if (event.keyCode == 13) {  // return
+                    if (!submitButton.disabled) {
+                        onSubmitClicked();
+                    }
+                }
+            }
+        });
+
+        function onSliderValueChanged() {
+            const rawSliderValue = parseFloat(slider.value);
+            let leftValue = 1;
+            let rightValue = 1;
+            sliderRatioLabel.innerHTML = rawSliderValue;
+            if (rawSliderValue > 1) {
+                leftValue = 1 / (2 - rawSliderValue);
+            } else if (rawSliderValue < 1) {
+                rightValue = 1 / rawSliderValue;
+            }
+            leftValue = ((leftValue - 1) * sliderValueScaling) + 1;
+            leftValue = Math.floor(displayedRatioPrecision * leftValue) / displayedRatioPrecision;
+            rightValue = ((rightValue - 1) * sliderValueScaling) + 1;
+            rightValue = Math.floor(displayedRatioPrecision * rightValue) / displayedRatioPrecision;
+            sliderRatioLabel.innerHTML = `${leftValue} : ${rightValue}`;
+            currentPerceivedAreaRatio = leftValue / rightValue;
+            if (currentPerceivedAreaRatio != 1) {     // one way gate. 1:1 can be selected again, but it needs to be off to be submittable
+                submitButton.disabled = false;
+            }
+        }
+
+        function onNudgeButtonPressed() {
+            if (this === leftNudgeButton) {
+                nudgeSliderValue(-nudgeDelta);
+            } else if (this === rightNudgeButton) {
+                nudgeSliderValue(nudgeDelta);
+            }
+        }
+
+        function nudgeSliderValue(nudgeAmount) {
+            let newValue = Math.max(0, Math.min(2, parseFloat(slider.value) + nudgeAmount));
+            slider.value = newValue;
+            onSliderValueChanged();
+        }
+
+        function randomRange(min, max) {
+            return min + (Math.random() * (max - min));
+        }
+
+        function onSubmitClicked() {
+            testResults[performedTestCount] = {
+                circle: drawCircles,
+                square: drawSquares,
+                trueRatio: currentDisplayedAreaRatio,
+                perceivedRatio: currentPerceivedAreaRatio
+            };
+            performedTestCount++;
+            if (performedTestCount < totalNumberOfTests) {
+                nextTest();
+            } else {
+                finishTests();
+            }
+        }
+
+        function nextTest() {
+            if ((performedTestCount % testCategoryLength) == 0) {
+                if (drawCircles) {
+                    drawCircles = false;
+                    drawSquares = true;
+                } else {
+                    drawCircles = true;
+                    drawSquares = false;
+                }
+            }
+
+            currentDisplayedAreaRatio = getNewTestAreaRatio();
+            window.requestAnimationFrame(render)
+
+            slider.value = 1;
+            onSliderValueChanged();
+            submitButton.disabled = true;
+            testCounter.innerHTML = "Test " + (performedTestCount + 1) + " of " + totalNumberOfTests;
+        }
+
+        function finishTests() {
+            testCounter.innerHTML = "Test finished";
+            document.querySelector("body").querySelector("#testInputs").remove();
+            document.querySelector("body").append(document.querySelector("#resultsTemplate").content.cloneNode(true).firstElementChild);
+            const xValueOutput = document.querySelector("#resultsOutput");
+
+            console.log(testResults);
+            let xValueSum = 0;
+            testResults.forEach(function (value, index, array) {
+                const newXValue = Math.log(value.perceivedRatio) / Math.log(value.trueRatio);
+                testXValues[index] = newXValue;
+                xValueSum += newXValue;
+            });
+            averageXValue = xValueSum / testXValues.length;
+            console.log(testXValues);
+
+            xValueOutput.innerHTML = `avg(x) = ${Math.floor(1000 * averageXValue) / 1000}`;
+
+            window.requestAnimationFrame(renderFinalResult);
+        }
+
+        function getNewTestAreaRatio() {
+            const lerp = Math.pow(Math.random(), randomRatioDistribution);
+            const rand = lerp * maxLinearSizeRatio + (1 - lerp) * minLinearSizeRatio;
+            if (Math.random() < 0.5) {
+                return 1 / (rand * rand);
+            } else {
+                return (rand * rand);
+            }
+        }
+
+        function getDrawRandomFactor() {
+            return 1 + ((Math.random() - 0.5) * drawVariance);
+        }
+
+        function render(time) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.lineWidth = testGeometryStrokeWidth;
+
+            const currentWidth = canvas.width * defaultWidthFraction * getDrawRandomFactor();
+            const currentSpace = canvas.width * defaultSpaceWidthFraction * getDrawRandomFactor();
+            const combinedDiameters = currentWidth - currentSpace;
+            const currentDisplayedLengthRatio = Math.sqrt(currentDisplayedAreaRatio);
+            const rightDiameter = combinedDiameters / (1 + currentDisplayedLengthRatio);
+            const leftDiameter = combinedDiameters - rightDiameter;
+            const rightRadius = rightDiameter / 2;
+            const leftRadius = leftDiameter / 2;
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            if (drawCircles) {
+                ctx.strokeStyle = circleColor;
+                ctx.beginPath();
+                ctx.arc(
+                    centerX - 0.5 * currentWidth + leftRadius,
+                    centerY,
+                    leftRadius,
+                    0,
+                    2 * Math.PI
+                );
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(
+                    centerX + 0.5 * currentWidth - rightRadius,
+                    centerY,
+                    rightRadius,
+                    0,
+                    2 * Math.PI
+                );
+                ctx.stroke();
+            } else if (drawSquares) {
+                ctx.strokeStyle = squareColor;
+                ctx.strokeRect(
+                    centerX - 0.5 * currentWidth,
+                    centerY - leftRadius,
+                    leftDiameter,
+                    leftDiameter
+                );
+                ctx.strokeRect(
+                    centerX + 0.5 * currentWidth - rightDiameter,
+                    centerY - rightRadius,
+                    rightDiameter,
+                    rightDiameter
+                );
+            } else {
+                alert("what?");
+            }
+        }
+
+        function renderFinalResult(time) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = "rgb(0,0,0)";
+            drawHorzintalLineForXValue(0.1, resultsBoundaryLineStrokeWidth, 0.1, true);
+            drawHorzintalLineForXValue(0.5, resultsBoundaryLineStrokeWidth, 0.5, true);
+            drawHorzintalLineForXValue(1, resultsBaseLineStrokeWidth, 1, true);
+            drawHorzintalLineForXValue(2, resultsBoundaryLineStrokeWidth, 2, true);
+            drawHorzintalLineForXValue(10, resultsBoundaryLineStrokeWidth, 10, true);
+            ctx.strokeStyle = averageLineColor;
+            drawHorzintalLineForXValue(averageXValue, resultsBaseLineStrokeWidth, "avg", false);
+
+            let drawX = resultsReferenceLineLeftMargin + resultsBarsMargin;
+            const barOffset = (canvas.width - resultsReferenceLineLeftMargin - resultsReferenceLineRightMargin - 2 * resultsBarsMargin) / (testXValues.length - 1);
+            testXValues.forEach(function (value, index) {
+                ctx.lineWidth = resultsBarStrokeWidth;
+                const drawCol = testResults[index].circle ? circleColor : squareColor;
+                ctx.strokeStyle = drawCol;
+                ctx.fillStyle = drawCol;
+                drawVerticalLineForXValueAtX(value, drawX);
+                drawX += barOffset;
+            });
+
+            drawLegend();
+        }
+
+        function xValueToCanvasY(xValue) {
+            const ch2 = canvas.height / 2;
+            return ch2 - (Math.log(xValue) / Math.log(10)) * (0.75 * ch2);
+        }
+
+        function drawHorzintalLineForXValue(xValue, thickness, labelText, labelOnLeft) {
+            const y = xValueToCanvasY(xValue);
+            if (labelText) {
+                ctx.font = '1.2em Arial';
+                ctx.lineWidth = thickness;
+                if (labelOnLeft) {
+                    ctx.textAlign = "right";
+                    ctx.fillText(labelText, resultsReferenceLineLeftMargin - 10, y + 6);
+                } else {
+                    ctx.textAlign = "left";
+                    ctx.fillText(labelText, canvas.width - resultsReferenceLineRightMargin + 10, y + 6);
+                }
+            }
+            ctx.beginPath();
+            ctx.moveTo(resultsReferenceLineLeftMargin, y);
+            ctx.lineTo(canvas.width - resultsReferenceLineRightMargin, y);
+            ctx.stroke();
+        }
+
+        function drawVerticalLineForXValueAtX(xValue, x) {
+            ctx.beginPath();
+            const y = xValueToCanvasY(xValue)
+            ctx.moveTo(x, xValueToCanvasY(1));
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(x, y, resultsBarEndCircleRadius, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+
+        function drawLegend() {
+            const y = canvas.height - 20;
+            const centerX = canvas.width / 2;
+            const leftX = centerX - 0.125 * canvas.width;
+            const rightX = centerX + 0.125 * canvas.width;
+            drawSingleLegendAtX("squares", squareColor, leftX, y);
+            drawSingleLegendAtX("circles", circleColor, rightX, y);
+        }
+
+        function drawSingleLegendAtX(label, style, x, y) {
+            ctx.font = '1.2em Arial';
+            ctx.textAlign = "right"
+            ctx.lineWidth = resultsBarStrokeWidth;
+            ctx.fillStyle = "rgb(0,0,0)";
+            ctx.fillText(label, x - 10, y + 6);
+            ctx.strokeStyle = style;
+            ctx.fillStyle = style;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + 40, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(x + 40, y, resultsBarEndCircleRadius, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+
+    </script>
+</body>
+
+</html>
+
+<style>
+    body {
+        font-family: "arial";
+    }
+
+    #testCounter {
+        text-align: center;
+    }
+
+    #myCanvas {
+        display: block;
+        margin: auto;
+        background-color: #eeeeee;
+    }
+
+    #sliderLabel,
+    #resultsLabel {
+        text-align: center;
+        font-size: 0.8em;
+    }
+
+    #slider {
+        display: inline-block;
+        margin: auto;
+        width: 300px;
+    }
+
+    #sliderGroup {
+        display: flex;
+        margin: auto;
+        margin-top: -0.5em;
+        margin-bottom: -0.5em;
+        width: 400px;
+    }
+
+    .sliderNudgeButton {
+        display: inline-block;
+        width: 25px;
+        height: 20px;
+        padding: 0px;
+        margin: auto;
+    }
+
+    #sliderRatio,
+    #resultsOutput {
+        text-align: center;
+        font-size: 1.2em;
+        font-weight: bold;
+    }
+
+    #submitArea {
+        display: flex;
+    }
+
+    #submitButton {
+        display: inline-block;
+        margin: auto;
+        height: 3em;
+        width: 7em;
+    }
+</style>
