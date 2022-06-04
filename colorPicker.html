@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en-us">
+	<head>
+		<meta charset="utf-8">
+		<title>RGB Color Picker</title>
+	</head>
+	<body>
+        <!-- generated -->
+    </body>
+    <script>
+        const body = document.querySelector("body");
+        const setupGroup = generateSetupGroup();
+        const sliders = {};
+        addSlider("Red:", "r");
+        addSlider("Green:", "g");
+        addSlider("Blue:", "b");
+        const confirmButton = createButton("confirmButton", "Confirm", setupGroup);
+        confirmButton.addEventListener("click", () => { setupGroup.remove() });
+
+        function generateSetupGroup () {
+            const output = document.createElement("div");
+            output.id = "setup";
+            body.appendChild(output);
+            return output;
+        }
+
+        function addSlider (labelText, sliderId) {
+            const newGroup = document.createElement("div");
+            newGroup.className = "sliderGroup";
+            setupGroup.appendChild(newGroup);
+            const newLabel = document.createElement("label");
+            newLabel.innerHTML = labelText;
+            newLabel.htmlFor = sliderId;
+            newGroup.appendChild(newLabel);
+            const downButton = createButton("nudgeButton", "-", newGroup);
+            const newSlider = document.createElement("input");
+            newSlider.id = sliderId;
+            newSlider.type = "range";
+            newSlider.min = 0;
+            newSlider.max = 255;
+            newSlider.value = 255;
+            newSlider.step = 1;
+            newGroup.appendChild(newSlider);
+            const upButton = createButton("nudgeButton", "+", newGroup);
+            downButton.addEventListener("click", () => { newSlider.value--; onSliderChanged(); });
+            upButton.addEventListener("click", () => { newSlider.value++; onSliderChanged(); });
+            newSlider.addEventListener("input", onSliderChanged);
+            const newOutput = document.createElement("p");
+            newOutput.className = "sliderOutput";
+            newOutput.innerHTML = newSlider.value.toString();
+            newGroup.appendChild(newOutput);
+            sliders[sliderId] = {
+                slider: newSlider,
+                output: newOutput
+            };
+        };
+
+        function createButton (buttonClass, buttonText, parent) {
+            const output = document.createElement("button");
+            output.className = buttonClass;
+            output.innerHTML = buttonText;
+            parent.appendChild(output);
+            return output;
+        }
+
+        function onSliderChanged () {
+            sliders["r"].output.innerHTML = sliders["r"].slider.value;
+            sliders["g"].output.innerHTML = sliders["g"].slider.value;
+            sliders["b"].output.innerHTML = sliders["b"].slider.value;
+            body.style.backgroundColor = `rgb(${sliders["r"].slider.value}, ${sliders["g"].slider.value}, ${sliders["b"].slider.value})`
+        }
+
+    </script>
+    <style>
+        body {
+            font-family: "arial";
+        }
+        label {
+            display: inline-block;
+            width: 4em;
+        }
+        input {
+            width: 20em;
+            margin-left: 1em;
+            margin-right: 1em;
+            position: relative;
+            top: 0.5em;
+        }
+        .nudgeButton {
+            width: 2em;
+        }
+        .confirmButton {
+            margin: auto;
+            margin-top: 2em;
+            display: block;
+        }
+        .sliderOutput {
+            text-align: right;
+            display: inline-block;
+            width: 3em;
+        }
+        #setup {
+            display: inline-block;
+            padding: 1em;
+            background-color: white;
+            outline-color: black;
+            outline-width: 1px;
+            outline-style: solid;
+        }
+    </style>
+</html>
