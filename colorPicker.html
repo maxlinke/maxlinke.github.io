@@ -17,8 +17,12 @@
             l: 255
         };
         displaySetup();
-        html.addEventListener("dblclick", () => {
-            if(!document.getElementById("setup")){
+        let lastClick = Date.now();
+        html.addEventListener("click", () => {
+            const nowClick = Date.now();
+            const isDoubleClick = (nowClick - lastClick) < 500;
+            lastClick = nowClick;
+            if(isDoubleClick && !document.getElementById("setup")){
                 displaySetup();
             }   
         });
