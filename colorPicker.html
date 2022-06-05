@@ -8,14 +8,33 @@
         <!-- generated -->
     </body>
     <script>
+        const html = document.querySelector("html");
         const body = document.querySelector("body");
-        const setupGroup = generateSetupGroup();
-        const sliders = {};
-        addSlider("Red:", "r");
-        addSlider("Green:", "g");
-        addSlider("Blue:", "b");
-        const confirmButton = createButton("confirmButton", "Confirm", setupGroup);
-        confirmButton.addEventListener("click", () => { setupGroup.remove() });
+        const currentValues = {
+            r: 255,
+            g: 255,
+            b: 255,
+            l: 255
+        };
+        displaySetup();
+        html.addEventListener("dblclick", () => {
+            if(!document.getElementById("setup")){
+                displaySetup();
+            }   
+        });
+
+        function displaySetup () {
+            const setupGroup = generateSetupGroup();
+            const sliders = {};
+            addSlider(setupGroup, sliders, "Red:", "r");
+            addSlider(setupGroup, sliders, "Green:", "g");
+            addSlider(setupGroup, sliders, "Blue:", "b");
+            addSlider(setupGroup, sliders, "Brightness:", "l");
+            const confirmButton = createButton("confirmButton", "Confirm and close", setupGroup);
+            confirmButton.addEventListener("click", () => { setupGroup.remove() });
+            createHint(setupGroup, "(Double click to bring the menu back up)");
+            onSliderChanged(sliders);
+        }
 
         function generateSetupGroup () {
             const output = document.createElement("div");
@@ -24,32 +43,36 @@
             return output;
         }
 
-        function addSlider (labelText, sliderId) {
+        function addSlider (parent, collection, labelText, sliderId) {
             const newGroup = document.createElement("div");
             newGroup.className = "sliderGroup";
-            setupGroup.appendChild(newGroup);
+            parent.appendChild(newGroup);
             const newLabel = document.createElement("label");
             newLabel.innerHTML = labelText;
             newLabel.htmlFor = sliderId;
             newGroup.appendChild(newLabel);
+            const minButton = createButton("minMaxButton", "0", newGroup);
             const downButton = createButton("nudgeButton", "-", newGroup);
             const newSlider = document.createElement("input");
             newSlider.id = sliderId;
             newSlider.type = "range";
             newSlider.min = 0;
             newSlider.max = 255;
-            newSlider.value = 255;
+            newSlider.value = currentValues[sliderId];
             newSlider.step = 1;
             newGroup.appendChild(newSlider);
             const upButton = createButton("nudgeButton", "+", newGroup);
-            downButton.addEventListener("click", () => { newSlider.value--; onSliderChanged(); });
-            upButton.addEventListener("click", () => { newSlider.value++; onSliderChanged(); });
-            newSlider.addEventListener("input", onSliderChanged);
+            const maxButton = createButton("minMaxButton", "255", newGroup);
+            minButton.addEventListener("click", () => { newSlider.value = 0; onSliderChanged(collection); });
+            maxButton.addEventListener("click", () => { newSlider.value = 255; onSliderChanged(collection); });
+            downButton.addEventListener("click", () => { newSlider.value--; onSliderChanged(collection); });
+            upButton.addEventListener("click", () => { newSlider.value++; onSliderChanged(collection); });
+            newSlider.addEventListener("input", () => { onSliderChanged(collection); });
             const newOutput = document.createElement("p");
             newOutput.className = "sliderOutput";
             newOutput.innerHTML = newSlider.value.toString();
             newGroup.appendChild(newOutput);
-            sliders[sliderId] = {
+            collection[sliderId] = {
                 slider: newSlider,
                 output: newOutput
             };
@@ -63,11 +86,21 @@
             return output;
         }
 
-        function onSliderChanged () {
-            sliders["r"].output.innerHTML = sliders["r"].slider.value;
-            sliders["g"].output.innerHTML = sliders["g"].slider.value;
-            sliders["b"].output.innerHTML = sliders["b"].slider.value;
-            body.style.backgroundColor = `rgb(${sliders["r"].slider.value}, ${sliders["g"].slider.value}, ${sliders["b"].slider.value})`
+        function createHint (parent, hintText) {
+            const newHint = document.createElement("p");
+            newHint.className = "hint";
+            newHint.innerHTML = hintText;
+            parent.appendChild(newHint);
+        }
+
+        function onSliderChanged (sliders) {
+            Object.keys(sliders).forEach(sliderId => {
+                const value = sliders[sliderId].slider.value;
+                sliders[sliderId].output.innerHTML = value;
+                currentValues[sliderId] = value;
+            });
+            const l = sliders["l"].slider.value / 255;
+            body.style.backgroundColor = `rgb(${l * sliders["r"].slider.value}, ${l * sliders["g"].slider.value}, ${l * sliders["b"].slider.value})`
         }
 
     </script>
@@ -77,7 +110,7 @@
         }
         label {
             display: inline-block;
-            width: 4em;
+            width: 5.5em;
         }
         input {
             width: 20em;
@@ -85,6 +118,11 @@
             margin-right: 1em;
             position: relative;
             top: 0.5em;
+        }
+        .minMaxButton {
+            width: 3em;
+            margin-left: 1em;
+            margin-right: 1em;
         }
         .nudgeButton {
             width: 2em;
@@ -99,9 +137,14 @@
             display: inline-block;
             width: 3em;
         }
+        .hint{
+            text-align: center;
+            font-size: 67%;
+        }
         #setup {
             display: inline-block;
-            padding: 1em;
+            padding-left: 1em;
+            padding-right: 1em;
             background-color: white;
             outline-color: black;
             outline-width: 1px;
