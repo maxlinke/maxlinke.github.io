@@ -10,22 +10,16 @@
     <script>
         const html = document.querySelector("html");
         const body = document.querySelector("body");
-        const currentValues = {
-            r: 255,
-            g: 255,
-            b: 255,
-            l: 255
-        };
+        let currentValues = sessionStorage.getItem("currentValues");
+        if(!currentValues){
+            currentValues = {
+                r: 255,
+                g: 255,
+                b: 255,
+                l: 255
+            };
+        }
         displaySetup();
-        let lastClick = Date.now();
-        html.addEventListener("click", () => {
-            const nowClick = Date.now();
-            const isDoubleClick = (nowClick - lastClick) < 500;
-            lastClick = nowClick;
-            if(isDoubleClick && !document.getElementById("setup")){
-                displaySetup();
-            }   
-        });
 
         function displaySetup () {
             const setupGroup = generateSetupGroup();
@@ -35,8 +29,7 @@
             addSlider(setupGroup, sliders, "Blue:", "b");
             addSlider(setupGroup, sliders, "Brightness:", "l");
             const confirmButton = createButton("confirmButton", "Confirm and close", setupGroup);
-            confirmButton.addEventListener("click", () => { setupGroup.remove() });
-            createHint(setupGroup, "(Double click to bring the menu back up)");
+            confirmButton.addEventListener("click", () => { setupGroup.remove(); });
             onSliderChanged(sliders);
         }
 
@@ -90,11 +83,12 @@
             return output;
         }
 
-        function createHint (parent, hintText) {
-            const newHint = document.createElement("p");
-            newHint.className = "hint";
-            newHint.innerHTML = hintText;
-            parent.appendChild(newHint);
+        function createShowMenuButton () {
+            const button = createButton("", "lmao", body);
+            button.onclick = function () {
+                displaySetup();
+                button.remove();
+            };
         }
 
         function onSliderChanged (sliders) {
@@ -102,6 +96,7 @@
                 const value = sliders[sliderId].slider.value;
                 sliders[sliderId].output.innerHTML = value;
                 currentValues[sliderId] = value;
+                sessionStorage.setItem("currentValues", currentValues);
             });
             const l = sliders["l"].slider.value / 255;
             body.style.backgroundColor = `rgb(${l * sliders["r"].slider.value}, ${l * sliders["g"].slider.value}, ${l * sliders["b"].slider.value})`
@@ -133,7 +128,8 @@
         }
         .confirmButton {
             margin: auto;
-            margin-top: 2em;
+            margin-top: 1em;
+            margin-bottom: 1em;
             display: block;
         }
         .sliderOutput {
