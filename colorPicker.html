@@ -12,7 +12,7 @@
         const body = document.querySelector("body");
         let currentValues;
         try{
-            currentValues = JSON.parse(sessionStorage.getItem("currentValues"));
+            currentValues = JSON.parse(localStorage.getItem("currentValues"));
         }catch{
             currentValues = undefined;
         }
@@ -101,7 +101,7 @@
                 const value = sliders[sliderId].slider.value;
                 sliders[sliderId].output.innerHTML = value;
                 currentValues[sliderId] = value;
-                sessionStorage.setItem("currentValues", JSON.stringify(currentValues));
+                localStorage.setItem("currentValues", JSON.stringify(currentValues));
             });
             const l = sliders["l"].slider.value / 255;
             body.style.backgroundColor = `rgb(${l * sliders["r"].slider.value}, ${l * sliders["g"].slider.value}, ${l * sliders["b"].slider.value})`
