@@ -10,7 +10,12 @@
     <script>
         const html = document.querySelector("html");
         const body = document.querySelector("body");
-        let currentValues = sessionStorage.getItem("currentValues");
+        let currentValues;
+        try{
+            currentValues = JSON.parse(sessionStorage.getItem("currentValues"));
+        }catch{
+            currentValues = undefined;
+        }
         if(!currentValues){
             currentValues = {
                 r: 255,
@@ -96,7 +101,7 @@
                 const value = sliders[sliderId].slider.value;
                 sliders[sliderId].output.innerHTML = value;
                 currentValues[sliderId] = value;
-                sessionStorage.setItem("currentValues", currentValues);
+                sessionStorage.setItem("currentValues", JSON.stringify(currentValues));
             });
             const l = sliders["l"].slider.value / 255;
             body.style.backgroundColor = `rgb(${l * sliders["r"].slider.value}, ${l * sliders["g"].slider.value}, ${l * sliders["b"].slider.value})`
