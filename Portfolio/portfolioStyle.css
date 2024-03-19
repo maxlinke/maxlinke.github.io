@@ -1,0 +1,63 @@
+html{
+	background-color: #101010;
+	font-family: sans-serif;
+    padding: 0;
+}
+
+body{
+    margin: 0;
+    padding: 1em;
+}
+
+#verticalPortfolioContainer {
+    background-color: #202020;
+    color: white;
+	max-width: 60em;
+	display: block;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0px 0px 32px rgba(255, 255, 255, 0.5);
+    border-radius: 12px;
+    padding: 2em;
+}
+
+h1 {
+    margin: 0;
+}
+
+h2 {
+    font-size: 1em;
+    font-weight: normal;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+#headerPortfolioLink, #headerPortfolioLink:hover, #headerPortfolioLink:visited, #headerPortfolioLink:active {
+    color: inherit;
+}
+
+a {
+    /* color: #3394ff;  */
+    color: orange
+}
+
+a:visited {
+    /* color: #0b7af5; */
+    color: peru
+}
+
+#portfolioHeader {
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
+#portfolioHeaderBodySeparator {
+    margin-top: 2em;
+    margin-bottom: 2em;
+}
+
+#portfolioBody {
+    margin-left: 1em;
+    margin-right: 1em;
+}
