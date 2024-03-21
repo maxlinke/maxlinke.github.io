@@ -64,42 +64,91 @@ function clearPage () {
     bodyDiv.replaceChildren();
 }
 
-function addHeader (headerText, parent) {
+function addHeader (headerText, parent, style) {
     parent = parent || bodyDiv;
     const newHeader = document.createElement("h3");
     parent.appendChild(newHeader);
     newHeader.innerText = headerText;
+    if(style != undefined){
+        addStyleToInnerHtml(newHeader, style);
+    }
     return newHeader;
 }
 
-function addParagraph (paragraphText, parent) {
+function addParagraph (paragraphText, parent, style) {
     parent = parent || bodyDiv;
     const newParagraph = document.createElement("p");
     parent.appendChild(newParagraph);
     newParagraph.innerText = paragraphText;
-    return newParagraph;
-}
-
-// TODO add support for side-images? they probably wouldn't go into the paragraph though. check wikipedia. 
-function addCompoundParagraph (paragraphPieces, parent) {
-    const newParagraph = addParagraph("", parent);
-    for(const piece of paragraphPieces){
-        if(piece.href != undefined){
-            addLink(piece.text, piece.href, newParagraph);
-        }else{
-            newParagraph.innerHTML += piece.text;
-        }
+    if(style != undefined){
+        addStyleToInnerHtml(newParagraph, style);
     }
     return newParagraph;
 }
 
+// TODO add support for side-images? they probably wouldn't go into the paragraph though. check wikipedia. 
+// TODO but at least style would be nice to have. probably per piece. 
+function addCompoundParagraph (paragraphPieces, parent) {
+    parent = parent || bodyDiv;
+    const tempDiv = document.createElement("div");
+    parent.appendChild(tempDiv);
+    for(const piece of paragraphPieces){
+        let newElement;
+        if(piece.href != undefined){
+            newElement = addLink(piece.text, piece.href, tempDiv, piece.style);
+        }else{
+            newElement = addParagraph(piece.text, tempDiv, piece.style);
+        }
+    }
+    const outputParagraph = addParagraph("", parent);
+    let innerHtmlPieces = [];
+    for(const childNode of tempDiv.childNodes){
+        switch(childNode.nodeName){
+            case "P":
+                innerHtmlPieces.push(childNode.innerHTML);
+                break;
+            case "A":
+                innerHtmlPieces.push(childNode.outerHTML);
+                break;
+            default:
+                throw new Error(`Unsupported node name \"${childNode.nodeName}\"`);
+        }
+    }
+    outputParagraph.innerHTML = innerHtmlPieces.join("");
+    parent.removeChild(tempDiv);
+    return outputParagraph;
+}
+
+function addStyleToInnerHtml (target, styleInput) {
+    let styles = [];
+    if(typeof(styleInput) == "string"){
+        styles.push(styleInput);
+    }else if(Array.isArray(styleInput)){
+        for(const style of styleInput){
+            if(typeof(style) == "string"){
+                styles.push(style);
+            }else{
+                throw new Error(`Unsupported style object ${style}`);
+            }
+        }
+    }else{
+        throw new Error(`Unsupported style object ${styleInput}`);
+    }
+    for(const style of styles){
+        target.innerHTML = `<${style}>${target.innerHTML}</${style}>`;
+    }
+}
+
 // a lot of good info on links
 // https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/Creating_hyperlinks
-function addLink (linkText, linkTarget, parent) {
+function addLink (linkText, linkTarget, parent, style) {
     parent = parent || bodyDiv;
     const newLink = document.createElement("a");
     parent.appendChild(newLink);
     newLink.innerText = linkText;
     newLink.href = linkTarget;
+    if(style != undefined){
+        addStyleToInnerHtml(newLink, style);
+    }
     return newLink;
 }
