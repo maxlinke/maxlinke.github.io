@@ -47,15 +47,24 @@ function regeneratePage () {
         }
     }else{
         const pageIdsSortedByYear = getPortfolioPageIdsSorted();
-        for(let pageId of pageIdsSortedByYear){
-            const page = portfolioPages[pageId];
-            // TODO make this a nice pretty list
-            // with pictures and stuff
-            // use title, minidescrption, year (for sorting) and backgroundimagename (with subfoldername)
-            var newLink = document.createElement("a");
-            bodyDiv.appendChild(newLink);
-            newLink.href = `#${pageId}`;
-            newLink.innerText = `${page.title} (${page.year})`;
+        for(let i=0; i<3; i++){     // temp
+            for(let pageId of pageIdsSortedByYear){
+                const page = portfolioPages[pageId];
+                const newLink = addLink("", `#${pageId}`, bodyDiv);
+                newLink.className = "portfolioPageLink";
+                const newBoxDiv = addDiv(newLink);
+                newBoxDiv.className = "portfolioPageLinkBox portfolioPageLinkBoxOverlayTint";
+                newBoxDiv.style = `background-image: url(${page.subfolderName}/${page.backgroundImageName})`;
+                const newYearDiv = addDiv(newBoxDiv);
+                newYearDiv.className = "portfolioPageLinkYear";
+                newYearDiv.innerText = page.year;
+                const newTitleDiv = addDiv(newBoxDiv);
+                newTitleDiv.className = "portfolioPageLinkTitle";
+                newTitleDiv.innerText = page.title;
+                const newMiniDescDiv = addDiv(newBoxDiv);
+                newMiniDescDiv.className = "portfolioPageLinkMiniDescription";
+                newMiniDescDiv.innerText = page.miniDescription;
+            }
         }
     }
 }
@@ -64,12 +73,19 @@ function clearPage () {
     bodyDiv.replaceChildren();
 }
 
+function addDiv (parent) {
+    parent = parent || bodyDiv;
+    const newDiv = document.createElement("div");
+    parent.appendChild(newDiv);
+    return newDiv;
+}
+
 function addHeader (headerText, parent, style) {
     parent = parent || bodyDiv;
     const newHeader = document.createElement("h3");
     parent.appendChild(newHeader);
     newHeader.innerText = headerText;
-    if(style != undefined){
+    if(style){
         addStyleToInnerHtml(newHeader, style);
     }
     return newHeader;
@@ -80,7 +96,7 @@ function addParagraph (paragraphText, parent, style) {
     const newParagraph = document.createElement("p");
     parent.appendChild(newParagraph);
     newParagraph.innerText = paragraphText;
-    if(style != undefined){
+    if(style){
         addStyleToInnerHtml(newParagraph, style);
     }
     return newParagraph;
@@ -94,7 +110,7 @@ function addCompoundParagraph (paragraphPieces, parent) {
     parent.appendChild(tempDiv);
     for(const piece of paragraphPieces){
         let newElement;
-        if(piece.href != undefined){
+        if(piece.href){
             newElement = addLink(piece.text, piece.href, tempDiv, piece.style);
         }else{
             newElement = addParagraph(piece.text, tempDiv, piece.style);
@@ -147,7 +163,7 @@ function addLink (linkText, linkTarget, parent, style) {
     parent.appendChild(newLink);
     newLink.innerText = linkText;
     newLink.href = linkTarget;
-    if(style != undefined){
+    if(style){
         addStyleToInnerHtml(newLink, style);
     }
     return newLink;
