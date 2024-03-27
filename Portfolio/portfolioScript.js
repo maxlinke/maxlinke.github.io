@@ -18,6 +18,7 @@ function getPortfolioPageIdsSorted () {
 }
 
 let bodyDiv;
+let currentPage;
 
 document.addEventListener("DOMContentLoaded", () => {
     console.log("dom content loaded");
@@ -38,18 +39,23 @@ function regeneratePage () {
         addLink("< Back to list", "", addParagraph(""));    // TODO can i just change the href of the window without an actual reload? i.e. just remove the stuff behind the # and invoke a hashchange?
         const pageId  = window.location.href.substring(window.location.href.indexOf("#") + 1);
         if(portfolioPages[pageId] == undefined){
+            currentPage = null;
             addHeader("Error");
             addParagraph(`Unknown page \"${pageId}\"`);
         }else{
-            var page = portfolioPages[pageId];
-            addHeader(page.title);
-            page.createElements();
+            currentPage = portfolioPages[pageId];
+            addHeader(currentPage.title);
+            currentPage.createElements();
         }
     }else{
+        currentPage = null;
         const pageIdsSortedByYear = getPortfolioPageIdsSorted();
         for(let i=0; i<3; i++){     // temp
             for(let pageId of pageIdsSortedByYear){
                 const page = portfolioPages[pageId];
+                if(page.hidden){
+                    continue;
+                }
                 const newLink = addLink("", `#${pageId}`, bodyDiv);
                 newLink.className = "portfolioPageLink";
                 const newBoxDiv = addDiv(newLink);
@@ -91,6 +97,17 @@ function addHeader (headerText, parent, style) {
     return newHeader;
 }
 
+function addSubHeader (headerText, parent, style) {
+    parent = parent || bodyDiv;
+    const newHeader = document.createElement("h4");
+    parent.appendChild(newHeader);
+    newHeader.innerText = headerText;
+    if(style){
+        addStyleToInnerHtml(newHeader, style);
+    }
+    return newHeader;
+}
+
 function addParagraph (paragraphText, parent, style) {
     parent = parent || bodyDiv;
     const newParagraph = document.createElement("p");
@@ -103,7 +120,6 @@ function addParagraph (paragraphText, parent, style) {
 }
 
 // TODO add support for side-images? they probably wouldn't go into the paragraph though. check wikipedia. 
-// TODO but at least style would be nice to have. probably per piece. 
 function addCompoundParagraph (paragraphPieces, parent) {
     parent = parent || bodyDiv;
     const tempDiv = document.createElement("div");
@@ -167,4 +183,42 @@ function addLink (linkText, linkTarget, parent, style) {
         addStyleToInnerHtml(newLink, style);
     }
     return newLink;
+}
+
+function addMedia (elementType, fileNameOrPath, altText, subText, parent) {
+    parent = parent || bodyDiv;
+    const overallParent = addDiv(parent);
+    overallParent.className = "portfolioMediaContainer";
+    const mediaParent = addDiv(overallParent);
+    mediaParent.className = "horizontallyCenterChild";
+    const newMediaElement = document.createElement(elementType);
+    mediaParent.appendChild(newMediaElement);
+    newMediaElement.className = "portfolioMedia";
+    if(currentPage){
+        newMediaElement.src = `./${currentPage.subfolderName}/${fileNameOrPath}`;
+    }else{
+        newMediaElement.src = fileNameOrPath;
+    }
+    switch(elementType){
+        case "img":
+            newMediaElement.alt = altText;
+            break;
+        case "video":
+            newMediaElement.controls = true;
+            break;
+    }
+    newMediaElement.title = altText;
+    if(subText){
+        const newSubText = addParagraph(subText, overallParent);
+        newSubText.className = "portfolioMediaSubtext";
+    }
+    return newMediaElement;
+}
+
+function addImage (fileNameOrPath, altText, subText, parent) {
+    return addMedia("img", fileNameOrPath, altText, subText, parent);
+}
+
+function addVideo (fileNameOrPath, altText, subText, parent) {
+    return addMedia("video", fileNameOrPath, altText, subText, parent);
 }

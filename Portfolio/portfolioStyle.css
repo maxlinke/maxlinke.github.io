@@ -33,6 +33,23 @@ h2 {
     color: rgba(255, 255, 255, 0.5);
 }
 
+h3 {
+    font-size: 2em;
+    color: peru;
+    /* text-decoration: underline; */
+    margin-left: 20px;
+    margin-bottom: 1em;
+}
+
+h4 {
+    font-size: 1.5em;
+    font-weight: normal;
+    color: peru;
+    /* text-decoration: underline; */
+    margin-left: 20px;
+    margin-top: 2em;
+}
+
 #headerPortfolioLink, #headerPortfolioLink:hover, #headerPortfolioLink:visited, #headerPortfolioLink:active {
     color: inherit;
 }
@@ -121,4 +138,34 @@ a:hover {
     left: 10px;
     bottom: 20px;
     opacity: 0.5;
+}
+
+.horizontallyCenterChild {
+    display: flex;
+    justify-content: center;
+}
+
+.portfolioMediaContainer {
+    /* background-color: rgba(0, 0, 0, 0.5); */
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    margin: 1em;
+    padding: 0.5em;
+}
+
+.portfolioMedia {
+    border: 1px solid peru;
+    max-width: 90%;
+    margin-top: 0;
+}
+
+.portfolioMediaSubtext {
+    /* color: rgba(255, 255, 255, 0.5); */
+    text-align: center;
+    margin-top: 0.5em;
+    margin-bottom: 0;
+    font-style: italic;
+    /* font-size: 80%;
+    font-weight: bold; */
 }
