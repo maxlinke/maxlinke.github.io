@@ -1,6 +1,6 @@
 'use strict';
 
-portfolioPages.testPage = {
+registerPage ("testPage", {
     // hidden: true,
     title: "Test Page",
     miniDescription: "This is just a test",
@@ -37,4 +37,4 @@ portfolioPages.testPage = {
         addVideo("Bossmusic-1.webm", "Test Video", "Video Subtext");
         addParagraph("Hard-pressed, Mago moved men from the north wall, overlooking a broad, shallow lagoon. Anticipating this, a force of 500 men waded the lagoon to scale the north wall unopposed. They fought their way to the east gate, opened it from inside and let in their comrades. The city fell and became a logistics centre for the Roman war effort. By 206 BC the Carthaginians had been expelled from Iberia.");
     }
-};
+});

@@ -145,6 +145,10 @@ a:hover {
     justify-content: center;
 }
 
+.portfolioTextElement {
+    line-height: 150%;
+}
+
 .portfolioMediaContainer {
     /* background-color: rgba(0, 0, 0, 0.5); */
     display: flex;

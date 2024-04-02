@@ -20,20 +20,20 @@ function getPortfolioPageIdsSorted () {
 let bodyDiv;
 let currentPage;
 
+function registerPage (id, page) {
+    portfolioPages[id] = page;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("dom content loaded");
     bodyDiv = document.getElementById("portfolioBody");
     regeneratePage();
 });
 
 window.addEventListener("hashchange", () => {
-    console.log("hash change");
     regeneratePage();
 });
 
 function regeneratePage () {
-    console.log(`regenerate page at ${new Date().toISOString()}`);
-    console.log(portfolioPages);
     clearPage();
     if(window.location.href.includes("#")){
         addLink("< Back to list", "", addParagraph(""));    // TODO can i just change the href of the window without an actual reload? i.e. just remove the stuff behind the # and invoke a hashchange?
@@ -45,9 +45,12 @@ function regeneratePage () {
         }else{
             currentPage = portfolioPages[pageId];
             addHeader(currentPage.title);
-            currentPage.createElements();
+            if(currentPage.createElements){
+                currentPage.createElements();
+            }
         }
     }else{
+        console.log("doing the menu page, yo");
         currentPage = null;
         const pageIdsSortedByYear = getPortfolioPageIdsSorted();
         for(let i=0; i<3; i++){     // temp
@@ -112,6 +115,7 @@ function addParagraph (paragraphText, parent, style) {
     parent = parent || bodyDiv;
     const newParagraph = document.createElement("p");
     parent.appendChild(newParagraph);
+    newParagraph.className = "portfolioTextElement";
     newParagraph.innerText = paragraphText;
     if(style){
         addStyleToInnerHtml(newParagraph, style);
@@ -119,20 +123,19 @@ function addParagraph (paragraphText, parent, style) {
     return newParagraph;
 }
 
-// TODO add support for side-images? they probably wouldn't go into the paragraph though. check wikipedia. 
-function addCompoundParagraph (paragraphPieces, parent) {
+function mergePiecesToInnerHTML (pieces, parent) {
     parent = parent || bodyDiv;
     const tempDiv = document.createElement("div");
     parent.appendChild(tempDiv);
-    for(const piece of paragraphPieces){
+    for(const piece of pieces){
         let newElement;
         if(piece.href){
             newElement = addLink(piece.text, piece.href, tempDiv, piece.style);
         }else{
             newElement = addParagraph(piece.text, tempDiv, piece.style);
+            newElement.className = undefined;
         }
     }
-    const outputParagraph = addParagraph("", parent);
     let innerHtmlPieces = [];
     for(const childNode of tempDiv.childNodes){
         switch(childNode.nodeName){
@@ -146,8 +149,15 @@ function addCompoundParagraph (paragraphPieces, parent) {
                 throw new Error(`Unsupported node name \"${childNode.nodeName}\"`);
         }
     }
-    outputParagraph.innerHTML = innerHtmlPieces.join("");
+    const output = innerHtmlPieces.join("");
     parent.removeChild(tempDiv);
+    return output;
+}
+
+function addCompoundParagraph (paragraphPieces, parent) {
+    parent = parent || bodyDiv;
+    const outputParagraph = addParagraph("", parent);
+    outputParagraph.innerHTML = mergePiecesToInnerHTML(paragraphPieces);
     return outputParagraph;
 }
 
@@ -221,4 +231,29 @@ function addImage (fileNameOrPath, altText, subText, parent) {
 
 function addVideo (fileNameOrPath, altText, subText, parent) {
     return addMedia("video", fileNameOrPath, altText, subText, parent);
+}
+
+function addList (tag, items, parent) {
+    parent = parent || bodyDiv;
+    const newList = document.createElement(tag);
+    parent.appendChild(newList);
+    for(const item of items){
+        const newItem = document.createElement("li");
+        newList.appendChild(newItem);
+        newList.className = "portfolioTextElement";
+        if(Array.isArray(item)){
+            newItem.innerHTML = mergePiecesToInnerHTML(item);
+        }else{
+            newItem.innerHTML = mergePiecesToInnerHTML([item]);
+        }
+    }
+    return newList;
+}
+
+function addOrderedList (items, parent) {
+    return addList("ol", items, parent);
+}
+
+function addUnorderedList (items, parent) {
+    return addList("ul", items, parent);
 }
