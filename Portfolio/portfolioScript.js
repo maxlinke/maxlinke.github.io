@@ -53,7 +53,7 @@ function regeneratePage () {
         console.log("doing the menu page, yo");
         currentPage = null;
         const pageIdsSortedByYear = getPortfolioPageIdsSorted();
-        for(let i=0; i<3; i++){     // temp
+        // for(let i=0; i<3; i++){     // temp
             for(let pageId of pageIdsSortedByYear){
                 const page = portfolioPages[pageId];
                 if(page.hidden){
@@ -74,7 +74,7 @@ function regeneratePage () {
                 newMiniDescDiv.className = "portfolioPageLinkMiniDescription";
                 newMiniDescDiv.innerText = page.miniDescription;
             }
-        }
+        // }
     }
 }
 
