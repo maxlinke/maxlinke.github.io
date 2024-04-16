@@ -161,6 +161,116 @@ function addCompoundParagraph (paragraphPieces, parent) {
     return outputParagraph;
 }
 
+function addFormattedParagraph (rawText, parent) {
+    const readNumberOfAsterisks = function (checkIndex) {
+        let output = 0;
+        while(checkIndex < rawText.length && rawText.charAt(checkIndex) == "*"){
+            output++;
+            checkIndex++;
+        }
+        return output;
+    };
+    const getNewPiece = function () {
+        return {
+            text: "",
+            href: "",
+            leadingAsteriskCount: 0
+        };
+    }
+    const pieces = [];
+    let currentPiece = getNewPiece();
+    for(let i = 0; i < rawText.length; i++){
+        if(rawText.charAt(i) == "\\"){      // escapes the next character, appending it to the current paragraph's text directly
+            i++;
+            if(i < rawText.length){
+                currentPiece.text += rawText.charAt(i);
+            }
+            continue;
+        }
+        switch(rawText.charAt(i)){
+            case "*":
+                const asteriskCount = readNumberOfAsterisks(i);
+                i += asteriskCount - 1;
+                if(currentPiece.text){
+                    if(currentPiece.leadingAsteriskCount < 1){  // finish the unformatted text, start a new block
+                        pieces.push(currentPiece);
+                        currentPiece = getNewPiece();
+                        currentPiece.leadingAsteriskCount = asteriskCount;
+                    }else{
+                        if(asteriskCount == currentPiece.leadingAsteriskCount){
+                            switch(asteriskCount){
+                                case 1: 
+                                    currentPiece.style = "i";
+                                    break;
+                                case 2: 
+                                    currentPiece.style = "b";
+                                    break;
+                                case 3: 
+                                    currentPiece.style = ["b", "i"];
+                                    break;
+                            }
+                        }
+                        if(!currentPiece.style){
+                            currentPiece.text = `${"*".repeat(currentPiece.leadingAsteriskCount)}${currentPiece.text}${"*".repeat(asteriskCount)}`;
+                        }
+                        pieces.push(currentPiece);
+                        currentPiece = getNewPiece();
+                    }
+                }else{  // the piece has no text, so it must be new
+                    currentPiece.leadingAsteriskCount = asteriskCount;
+                }
+                break;
+            case "[":
+                if(currentPiece.text){
+                    pieces.push(currentPiece);
+                    currentPiece = getNewPiece();
+                }
+                const rawRemainder = rawText.substring(i);                  // makes for much easier to read code, even if it's potentially inefficient
+                const textEndBracketPos = rawRemainder.indexOf("]");        // if this is -1, there's no text
+                const textLength = textEndBracketPos - 1;                   // if this is <1, there is no text so it's invalid
+                const linkStartParenthesisPos = rawRemainder.indexOf("(");  // if this is -1, there's no link
+                const validLinkStartPos = linkStartParenthesisPos == textEndBracketPos + 1;
+                const linkEndParenthesisPos = rawRemainder.indexOf(")");    // if this is -1, there's no link. 
+                const linkLength = validLinkStartPos 
+                                   ? linkEndParenthesisPos - linkStartParenthesisPos - 1
+                                   : 0;
+                console.log({
+                    rawRemainder: rawRemainder,
+                    textEndBracketPos: textEndBracketPos,
+                    textLength: textLength,
+                    linkStartParenthesisPos: linkStartParenthesisPos,
+                    validLinkStartPos: validLinkStartPos,
+                    linkEndParenthesisPos: linkEndParenthesisPos,
+                    linkLength: linkLength,
+                });
+                
+                if(textLength < 1 || linkLength < 1){
+                    currentPiece.text += rawText.charAt(i);
+                    continue;    
+                }else{
+                    currentPiece.text = rawRemainder.substring(1, textEndBracketPos);
+                    currentPiece.href = rawRemainder.substring(linkStartParenthesisPos + 1, linkEndParenthesisPos);
+                    console.log({
+                        text: currentPiece.text,
+                        href: currentPiece.href
+                    });
+                    i += linkEndParenthesisPos;
+                }
+                break;
+            default:
+                if(currentPiece.href){
+                    pieces.push(currentPiece);
+                    currentPiece = getNewPiece();
+                }
+                currentPiece.text += rawText.charAt(i);
+        }
+    }
+    if(currentPiece.text){
+        pieces.push(currentPiece);
+    }
+    return addCompoundParagraph(pieces, parent);
+}
+
 function addStyleToInnerHtml (target, styleInput) {
     let styles = [];
     if(typeof(styleInput) == "string"){
@@ -193,6 +303,11 @@ function addLink (linkText, linkTarget, parent, style) {
         addStyleToInnerHtml(newLink, style);
     }
     return newLink;
+}
+
+function addCodeBlock (text, parent) {
+    // TODO it's a paragraph with a different kind of style
+    alert("TODO");
 }
 
 function addMedia (elementType, fileNameOrPath, altText, subText, parent) {
@@ -244,7 +359,14 @@ function addList (tag, items, parent) {
         if(Array.isArray(item)){
             newItem.innerHTML = mergePiecesToInnerHTML(item);
         }else{
-            newItem.innerHTML = mergePiecesToInnerHTML([item]);
+            if(typeof(item) == "string"){
+                const tempParagraph = addFormattedParagraph(item, parent);
+                const tempHTML = tempParagraph.innerHTML;
+                parent.removeChild(tempParagraph);
+                newItem.innerHTML = tempHTML;
+            }else{
+                newItem.innerHTML = mergePiecesToInnerHTML([item]);
+            }
         }
     }
     return newList;

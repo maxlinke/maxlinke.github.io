@@ -36,7 +36,7 @@ registerPage("trackerMusicPlayer", {
         ]);
         addUnorderedList([
             { text: "The first thing is selective volume control. Since the music is generated live from individual samples included in the file, the volume can be adjusted per sample, enabling such things as a dynamic soundtrack that only becomes audible when the player's health is low for example. While the same can be achieved with proper synchronization of AudioClips, here it's a side-effect of the playback itself. " },
-            { text: "Secondly, the speed can be altered without shifting the pitch. The frequency of the sounds the samples prouce is independent of the timing with which they are triggered. Granted, I only know this from the old Super Mario games and not much else, but this wouldn't be as easy with normal audio files. " },
+            { text: "Secondly, the speed can be altered without shifting the pitch. The frequency of the sounds the samples produce is independent of the timing with which they are triggered. Granted, I only know this from the old Super Mario games and not much else, but this wouldn't be as easy with normal audio files. " },
             { text: "Thirdly, since the music is played live, the song can jump from one position to another without the clicking that would arise from trying the same with a simple waveform. It can even be easily synced to the beat to be completely unnoticeable. " }
         ]);
         // add more text
