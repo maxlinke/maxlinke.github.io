@@ -75,7 +75,7 @@ a:hover {
     margin-right: 1em;
 }
 
-#portfolioHeaderBodySeparator {
+#portfolioHeaderBodySeparator, #portfolioPageFooterSeparator {
     margin-top: 2em;
     margin-bottom: 2em;
 }
@@ -120,7 +120,7 @@ a:hover {
 
 .portfolioPageLinkYear {
     font-size: 250%;
-    opacity: 0.5;
+    /* opacity: 0.5; */
     position: absolute;
     top: 16px;
     right: 8px;
@@ -129,15 +129,15 @@ a:hover {
 .portfolioPageLinkTitle {
     position: relative;
     left: 10px;
-    top: 15px;
+    top: 12px;
     font-size: 133%;
 }
 
 .portfolioPageLinkMiniDescription {
     position: absolute;
-    left: 10px;
-    bottom: 20px;
-    opacity: 0.5;
+    left: 20px;
+    bottom: 16px;
+    /* opacity: 0.5; */
 }
 
 .horizontallyCenterChild {

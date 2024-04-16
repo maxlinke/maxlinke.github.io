@@ -19,6 +19,7 @@ function getPortfolioPageIdsSorted () {
 
 let bodyDiv;
 let currentPage;
+let showingMainList;
 
 function registerPage (id, page) {
     portfolioPages[id] = page;
@@ -35,8 +36,11 @@ window.addEventListener("hashchange", () => {
 
 function regeneratePage () {
     clearPage();
+    const prevPage = currentPage;
+    const wasShowingList = showingMainList;
     if(window.location.href.includes("#")){
-        addLink("< Back to list", "", addParagraph(""));    // TODO can i just change the href of the window without an actual reload? i.e. just remove the stuff behind the # and invoke a hashchange?
+        showingMainList = false;
+        addBackToListLink();
         const pageId  = window.location.href.substring(window.location.href.indexOf("#") + 1);
         if(portfolioPages[pageId] == undefined){
             currentPage = null;
@@ -49,37 +53,63 @@ function regeneratePage () {
                 currentPage.createElements();
             }
         }
+        addPageFooterSeparatorLine();
+        addBackToListLink();
+        if(wasShowingList || (prevPage != null && currentPage != prevPage)){
+            scrollToTop();
+        }
     }else{
-        console.log("doing the menu page, yo");
         currentPage = null;
+        showingMainList = true;
         const pageIdsSortedByYear = getPortfolioPageIdsSorted();
-        // for(let i=0; i<3; i++){     // temp
-            for(let pageId of pageIdsSortedByYear){
-                const page = portfolioPages[pageId];
-                if(page.hidden){
-                    continue;
-                }
-                const newLink = addLink("", `#${pageId}`, bodyDiv);
-                newLink.className = "portfolioPageLink";
-                const newBoxDiv = addDiv(newLink);
-                newBoxDiv.className = "portfolioPageLinkBox portfolioPageLinkBoxOverlayTint";
-                newBoxDiv.style = `background-image: url(${page.subfolderName}/${page.backgroundImageName})`;
-                const newYearDiv = addDiv(newBoxDiv);
-                newYearDiv.className = "portfolioPageLinkYear";
-                newYearDiv.innerText = page.year;
-                const newTitleDiv = addDiv(newBoxDiv);
-                newTitleDiv.className = "portfolioPageLinkTitle";
-                newTitleDiv.innerText = page.title;
-                const newMiniDescDiv = addDiv(newBoxDiv);
-                newMiniDescDiv.className = "portfolioPageLinkMiniDescription";
-                newMiniDescDiv.innerText = page.miniDescription;
+        for(let pageId of pageIdsSortedByYear){
+            const page = portfolioPages[pageId];
+            if(page.hidden){
+                continue;
             }
-        // }
+            const newLink = addLink("", `#${pageId}`, bodyDiv);
+            newLink.className = "portfolioPageLink";
+            const newBoxDiv = addDiv(newLink);
+            newBoxDiv.className = "portfolioPageLinkBox portfolioPageLinkBoxOverlayTint";
+            newBoxDiv.style = `background-image: url(${page.subfolderName}/${page.backgroundImageName})`;
+            console.log(newBoxDiv.style);
+            console.log(page.subfolderName);
+            console.log(page.backgroundImageName);
+            console.log(`background-image: url(${page.subfolderName}/${page.backgroundImageName})`);
+            const newYearDiv = addDiv(newBoxDiv);
+            newYearDiv.className = "portfolioPageLinkYear";
+            newYearDiv.innerText = page.year;
+            const newTitleDiv = addDiv(newBoxDiv);
+            newTitleDiv.className = "portfolioPageLinkTitle";
+            newTitleDiv.innerText = page.title;
+            const newMiniDescDiv = addDiv(newBoxDiv);
+            newMiniDescDiv.className = "portfolioPageLinkMiniDescription";
+            newMiniDescDiv.innerText = page.miniDescription;
+        }
+        if(!wasShowingList){
+            scrollToTop();
+        }
     }
 }
 
 function clearPage () {
     bodyDiv.replaceChildren();
+}
+
+function scrollToTop () {
+    window.scrollTo(0, 0);
+    console.log("scrolling to top!");
+}
+
+function addBackToListLink () {
+    addLink("< Back to list", "", addParagraph(""));    // TODO can i just change the href of the window without an actual reload? i.e. just remove the stuff behind the # and invoke a hashchange?
+}
+
+function addPageFooterSeparatorLine (parent) {
+    parent = parent || bodyDiv;
+    const separator = document.createElement("hr");
+    separator.id = "portfolioPageFooterSeparator";
+    parent.appendChild(separator);
 }
 
 function addDiv (parent) {
