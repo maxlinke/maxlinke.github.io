@@ -75,7 +75,7 @@ a:hover {
     margin-right: 1em;
 }
 
-#portfolioHeaderBodySeparator, #portfolioPageFooterSeparator {
+#portfolioHeaderBodySeparator, .portfolioPageSeparator {
     margin-top: 2em;
     margin-bottom: 2em;
 }
@@ -173,4 +173,30 @@ a:hover {
     font-style: italic;
     /* font-size: 80%;
     font-weight: bold; */
+}
+
+.portfolioProjectInfoTable {
+    margin-left: 2em;
+}
+
+.portfolioProjectInfoTableLabel {
+    font-weight: normal;
+    text-align: left;
+    vertical-align: top;
+    color: peru;
+    padding: 4px;
+    padding-right: 2em;
+}
+
+.portfolioProjectInfoTableContent {
+    padding: 4px;
+}
+
+.portfolioProjectInfoTableContentList {
+    margin: 0;
+    padding-left: 15px;
+}
+
+.portfolioProjectInfoTableContentListItem {
+    margin: 0;
 }

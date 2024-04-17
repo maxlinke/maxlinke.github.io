@@ -29,7 +29,7 @@ registerPage ("testPage", {
             { text: " und so, ne? Dies sollte z.B. kein Link sein: <a href=\"\">Blablabla</a>." }
         ]);
         addFormattedParagraph("Das hier ist nur ein **Test**, ob Zeichen wie ***zum Beispiel*** < [funktionieren](#ayy), oder auch > oder &. Oder direkt <b>hypertext</b>. [Lorem ipsum](#lmao) und so, ne? Dies sollte z.B. kein Link sein: <a href=\"\">Blablabla</a>.");
-        addFormattedParagraph("Btw, der zweite identische ist als \\*ein\\* Stück Text im JS definiert, während der identische zuvor wesentlich involvierter geschrieben ist. Ich habe dafür nen Parser geschrieben. Das hier sollte z.B. nicht formatiert werden: *formatiere dies nicht**. Das hier schon: *formatiere dies*. Cool. Invalide Links führen zu offensichtlichen Problemen, aber das ist kein Problem, denke ich mir: [unvollständiger Link](#link gefolgt von mehr, zumindest theoretisch, *formatiertem* Text. Eine abschließende Klammer würde allerdings das alles ruinieren. ");
+        addFormattedParagraph("Btw, der zweite identische ist als \\*ein\\* Stück Text im JS definiert, während der identische zuvor wesentlich involvierter geschrieben ist. Ich habe dafür nen Parser geschrieben. \\*Italic\\* wird *Italic*, \\*\\*Bold\\*\\* wird **Bold**, \\*\\*\\*Bold-Italic\\*\\*\\* wird ***Bold-Italic***, \\_\\_Underline\\_\\_ wird __Underline__ und \\~\\~Strikethrough\\~\\~ wird ~~Strikethrough~~. Man *kann **auch** __mixen*, was **ziemlich**__ cool ist. Invalide Tags wie ****,_ oder ~ werden einfach ignoriert. ");
         addParagraph("Bold-Test Nummer 1", null, "b");
         addStyleToInnerHtml(addParagraph("Bold-Test Nummer 2"), "b");
         addParagraph("List test 1");
@@ -53,10 +53,7 @@ registerPage ("testPage", {
             "Item 3 *with* **style!** (But writing it like this is super chill!)"
         ]);
 
-
-
         addSubHeader("Sub header, yo");
-
         addParagraph("The battle of New Carthage, part of the Second Punic War, took place in early 209 BC when a Roman army under Publius Scipio (bust pictured) assaulted New Carthage, held by a Carthaginian garrison under Mago. Late in 210 BC Scipio took command of Roman forces in Iberia (modern Spain and Portugal) and decided to strike at the regional centre of Carthaginian power: its capital, New Carthage.");
         addImage("testBackground.png", "Test Image", "Test Subtext");
         addParagraph("He marched on the city and immediately attacked it. After defeating a Carthaginian force outside the walls, he pressed attacks on the east gate and the walls. Both were repulsed, but later that day Scipio renewed them. ");

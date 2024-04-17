@@ -53,7 +53,7 @@ function regeneratePage () {
                 currentPage.createElements();
             }
         }
-        addPageFooterSeparatorLine();
+        addSeparatorLine();
         addBackToListLink();
         if(wasShowingList || (prevPage != null && currentPage != prevPage)){
             scrollToTop();
@@ -100,10 +100,10 @@ function addBackToListLink () {
     addLink("< Back to list", "", addParagraph(""));    // TODO can i just change the href of the window without an actual reload? i.e. just remove the stuff behind the # and invoke a hashchange?
 }
 
-function addPageFooterSeparatorLine (parent) {
+function addSeparatorLine (parent) {
     parent = parent || bodyDiv;
     const separator = document.createElement("hr");
-    separator.id = "portfolioPageFooterSeparator";
+    separator.className = "portfolioPageSeparator";
     parent.appendChild(separator);
 }
 
@@ -187,9 +187,9 @@ function addCompoundParagraph (paragraphPieces, parent) {
 }
 
 function addFormattedParagraph (rawText, parent) {
-    const readNumberOfAsterisks = function (checkIndex) {
+    const readNumberOfCharacters = function (checkCharacter, checkIndex) {
         let output = 0;
-        while(checkIndex < rawText.length && rawText.charAt(checkIndex) == "*"){
+        while(checkIndex < rawText.length && rawText.charAt(checkIndex) == checkCharacter){
             output++;
             checkIndex++;
         }
@@ -199,82 +199,105 @@ function addFormattedParagraph (rawText, parent) {
         return {
             text: "",
             href: "",
-            leadingAsteriskCount: 0
+            leadingAsteriskCount: 0,
+            style: [...activeStyles]
         };
     }
+    const toggleStyle = function (style) {
+        if(currentPiece.text){
+            pieces.push(currentPiece);
+        }
+        if(Array.isArray(style)){
+            let missingStyles = [];
+            for(const singleStyle of style){
+                if(!activeStyles.includes(singleStyle)){
+                    missingStyles.push(singleStyle);
+                }
+            }
+            if(missingStyles.length < 1){
+                for(const singleStyle of style){
+                    activeStyles.splice(activeStyles.indexOf(singleStyle), 1);
+                }
+            }else{
+                activeStyles.push(...missingStyles);
+            }
+        }else{
+            const removeIndex = activeStyles.indexOf(style);
+            if(removeIndex >= 0){
+                activeStyles.splice(removeIndex, 1);
+            }else{
+                activeStyles.push(style);
+            }
+        }
+        currentPiece = getNewPiece();
+        return true;
+    }
+    const styleMarkdown = {
+        "~": {
+            2: "del"
+        },
+        "_": {
+            2: "u"
+        },
+        "*": {
+            1: "i",
+            2: "b",
+            3: ["b", "i"]
+        },
+    };
+    const activeStyles = [];
     const pieces = [];
     let currentPiece = getNewPiece();
     for(let i = 0; i < rawText.length; i++){
-        if(rawText.charAt(i) == "\\"){      // escapes the next character, appending it to the current paragraph's text directly
+        const currentChar = rawText.charAt(i);
+        if(currentChar == "\\"){    // escape
             i++;
             if(i < rawText.length){
                 currentPiece.text += rawText.charAt(i);
             }
             continue;
         }
-        switch(rawText.charAt(i)){
-            case "*":
-                const asteriskCount = readNumberOfAsterisks(i);
-                i += asteriskCount - 1;
-                if(currentPiece.text){
-                    if(currentPiece.leadingAsteriskCount < 1){  // finish the unformatted text, start a new block
-                        pieces.push(currentPiece);
-                        currentPiece = getNewPiece();
-                        currentPiece.leadingAsteriskCount = asteriskCount;
-                    }else{
-                        if(asteriskCount == currentPiece.leadingAsteriskCount){
-                            switch(asteriskCount){
-                                case 1: 
-                                    currentPiece.style = "i";
-                                    break;
-                                case 2: 
-                                    currentPiece.style = "b";
-                                    break;
-                                case 3: 
-                                    currentPiece.style = ["b", "i"];
-                                    break;
-                            }
-                        }
-                        if(!currentPiece.style){
-                            currentPiece.text = `${"*".repeat(currentPiece.leadingAsteriskCount)}${currentPiece.text}${"*".repeat(asteriskCount)}`;
-                        }
-                        pieces.push(currentPiece);
-                        currentPiece = getNewPiece();
-                    }
-                }else{  // the piece has no text, so it must be new
-                    currentPiece.leadingAsteriskCount = asteriskCount;
-                }
-                break;
-            case "[":
-                if(currentPiece.text){
-                    pieces.push(currentPiece);
-                    currentPiece = getNewPiece();
-                }
-                const rawRemainder = rawText.substring(i);                  // makes for much easier to read code, even if it's potentially inefficient
-                const textEndBracketPos = rawRemainder.indexOf("]");        // if this is -1, there's no text
-                const textLength = textEndBracketPos - 1;                   // if this is <1, there is no text so it's invalid
-                const linkStartParenthesisPos = rawRemainder.indexOf("(");  // if this is -1, there's no link
-                const validLinkStartPos = linkStartParenthesisPos == textEndBracketPos + 1;
-                const linkEndParenthesisPos = rawRemainder.indexOf(")");    // if this is -1, there's no link. 
-                const linkLength = validLinkStartPos 
-                                   ? linkEndParenthesisPos - linkStartParenthesisPos - 1
-                                   : 0; 
-                if(textLength < 1 || linkLength < 1){
-                    currentPiece.text += rawText.charAt(i);
-                    continue;    
-                }else{
-                    currentPiece.text = rawRemainder.substring(1, textEndBracketPos);
-                    currentPiece.href = rawRemainder.substring(linkStartParenthesisPos + 1, linkEndParenthesisPos);
-                    i += linkEndParenthesisPos;
-                }
-                break;
-            default:
-                if(currentPiece.href){
-                    pieces.push(currentPiece);
-                    currentPiece = getNewPiece();
-                }
-                currentPiece.text += rawText.charAt(i);
+        if(styleMarkdown[currentChar] != undefined){    // try to toggle style
+            const occurrences = readNumberOfCharacters(currentChar, i);
+            const style = styleMarkdown[currentChar][occurrences];
+            if(style){      // the tag was found
+                toggleStyle(style);
+            }else{          // the tag is invalid
+                currentPiece.text += currentChar.repeat(occurrences);
+            }
+            i += occurrences - 1;
+            continue;
         }
+        if(currentChar == "["){     // weblinks
+            if(currentPiece.text){
+                pieces.push(currentPiece);
+                currentPiece = getNewPiece();
+            }
+            const rawRemainder = rawText.substring(i);                  // makes for much easier to read code, even if it's potentially inefficient
+            const textEndBracketPos = rawRemainder.indexOf("]");        // if this is -1, there's no text
+            const textLength = textEndBracketPos - 1;                   // if this is <1, there is no text so it's invalid
+            const linkStartParenthesisPos = rawRemainder.indexOf("(");  // if this is -1, there's no link
+            const validLinkStartPos = linkStartParenthesisPos == textEndBracketPos + 1;
+            const linkEndParenthesisPos = rawRemainder.indexOf(")");    // if this is -1, there's no link. 
+            const linkLength = validLinkStartPos 
+                               ? linkEndParenthesisPos - linkStartParenthesisPos - 1
+                               : 0; 
+            if(textLength < 1 || linkLength < 1){
+                currentPiece.text += rawText.charAt(i);
+                continue;    
+            }else{
+                currentPiece.text = rawRemainder.substring(1, textEndBracketPos);
+                currentPiece.href = rawRemainder.substring(linkStartParenthesisPos + 1, linkEndParenthesisPos);
+                i += linkEndParenthesisPos;
+            }
+            continue;
+        }
+        // we got past all the custom shenanigans
+        if(currentPiece.href){
+            pieces.push(currentPiece);
+            currentPiece = getNewPiece();
+        }
+        currentPiece.text += rawText.charAt(i);
     }
     if(currentPiece.text){
         pieces.push(currentPiece);
@@ -389,4 +412,45 @@ function addOrderedList (items, parent) {
 
 function addUnorderedList (items, parent) {
     return addList("ul", items, parent);
+}
+
+function addProjectInfo (info, parent) {
+    const getFormattedParagraphHTML = function (rawText) {
+        const temparagraph = addFormattedParagraph(rawText, parent);
+        const htmlCache = temparagraph.innerHTML;
+        parent.removeChild(temparagraph);
+        return htmlCache;
+    }
+    parent = parent || bodyDiv;
+    addSeparatorLine(parent);
+    addSubHeader("Project info", parent);
+    const newTable = document.createElement("table");
+    parent.appendChild(newTable);
+    newTable.className = "portfolioProjectInfoTable";
+    for(const infoCategory in info){
+        const newRow = document.createElement("tr");
+        newTable.appendChild(newRow);
+        const label = document.createElement("th");
+        newRow.appendChild(label);
+        label.className = "portfolioProjectInfoTableLabel";
+        label.innerText = infoCategory;
+        const content = document.createElement("td");
+        newRow.appendChild(content);
+        content.className = "portfolioProjectInfoTableContent";
+        const categoryValue = info[infoCategory];
+        if(Array.isArray(categoryValue)){
+            const newList = document.createElement("ul");
+            content.appendChild(newList);
+            newList.className = "portfolioProjectInfoTableContentList";
+            for(const item of categoryValue){
+                const newItem = document.createElement("li");
+                newList.appendChild(newItem);
+                newItem.className = "portfolioProjectInfoTableContentListItem";
+                newItem.innerHTML = getFormattedParagraphHTML(`${item}`);
+            }
+        }else{
+            content.innerHTML = getFormattedParagraphHTML(`${categoryValue}`);
+        }
+    }
+    addSeparatorLine(parent);
 }
