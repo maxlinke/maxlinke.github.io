@@ -5,7 +5,7 @@ registerPage("trackerMusicPlayer", {
     miniDescription: "A plugin that properly plays .mod and .xm music files in Unity",
     year: 2023,
     numberInYear: 1,
-    subfolderName: "trackerMusicPlayer",
+    subfolderName: "trackerMusicPlayer_new",
     backgroundImageName: "tempBackground.png",
     createElements: () => {
         addFormattedParagraph(

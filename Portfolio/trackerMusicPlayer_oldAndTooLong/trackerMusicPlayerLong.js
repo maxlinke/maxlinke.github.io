@@ -2,11 +2,11 @@
 
 registerPage("trackerMusicPlayerLong", {
     // hidden: true,
-    title: "Tracker Music Player (Long)",
+    title: "Tracker Music Player (Old and too long)",
     miniDescription: "A plugin that properly plays .mod and .xm music files in Unity",
     year: 2023,
     numberInYear: 1,
-    subfolderName: "trackerMusicPlayerLong",
+    subfolderName: "trackerMusicPlayer_oldAndTooLong",
     backgroundImageName: "tempBackground.png",
     createElements: () => {
         // addCompoundParagraph([
