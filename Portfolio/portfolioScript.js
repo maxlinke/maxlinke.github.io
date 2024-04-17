@@ -72,10 +72,6 @@ function regeneratePage () {
             const newBoxDiv = addDiv(newLink);
             newBoxDiv.className = "portfolioPageLinkBox portfolioPageLinkBoxOverlayTint";
             newBoxDiv.style = `background-image: url(${page.subfolderName}/${page.backgroundImageName})`;
-            console.log(newBoxDiv.style);
-            console.log(page.subfolderName);
-            console.log(page.backgroundImageName);
-            console.log(`background-image: url(${page.subfolderName}/${page.backgroundImageName})`);
             const newYearDiv = addDiv(newBoxDiv);
             newYearDiv.className = "portfolioPageLinkYear";
             newYearDiv.innerText = page.year;
@@ -98,7 +94,6 @@ function clearPage () {
 
 function scrollToTop () {
     window.scrollTo(0, 0);
-    console.log("scrolling to top!");
 }
 
 function addBackToListLink () {
@@ -263,27 +258,13 @@ function addFormattedParagraph (rawText, parent) {
                 const linkEndParenthesisPos = rawRemainder.indexOf(")");    // if this is -1, there's no link. 
                 const linkLength = validLinkStartPos 
                                    ? linkEndParenthesisPos - linkStartParenthesisPos - 1
-                                   : 0;
-                console.log({
-                    rawRemainder: rawRemainder,
-                    textEndBracketPos: textEndBracketPos,
-                    textLength: textLength,
-                    linkStartParenthesisPos: linkStartParenthesisPos,
-                    validLinkStartPos: validLinkStartPos,
-                    linkEndParenthesisPos: linkEndParenthesisPos,
-                    linkLength: linkLength,
-                });
-                
+                                   : 0; 
                 if(textLength < 1 || linkLength < 1){
                     currentPiece.text += rawText.charAt(i);
                     continue;    
                 }else{
                     currentPiece.text = rawRemainder.substring(1, textEndBracketPos);
                     currentPiece.href = rawRemainder.substring(linkStartParenthesisPos + 1, linkEndParenthesisPos);
-                    console.log({
-                        text: currentPiece.text,
-                        href: currentPiece.href
-                    });
                     i += linkEndParenthesisPos;
                 }
                 break;
