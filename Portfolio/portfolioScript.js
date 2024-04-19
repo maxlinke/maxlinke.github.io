@@ -1,5 +1,7 @@
 'use strict';
 
+const defaultDocumentTitle = document.title;
+
 const portfolioPages = {};
 const portfolioPageIdsSorted = [];
 function getPortfolioPageIdsSorted () {
@@ -36,6 +38,7 @@ window.addEventListener("hashchange", () => {
 
 function regeneratePage () {
     clearPage();
+    document.title = defaultDocumentTitle;
     const prevPage = currentPage;
     const wasShowingList = showingMainList;
     if(window.location.href.includes("#")){
@@ -52,6 +55,7 @@ function regeneratePage () {
             if(currentPage.createElements){
                 currentPage.createElements();
             }
+            document.title = `${document.title} - ${currentPage.title}`;
         }
         addSeparatorLine();
         addBackToListLink();
@@ -344,38 +348,84 @@ function addCodeBlock (text, parent) {
     alert("TODO");
 }
 
-function addMedia (elementType, fileNameOrPath, altText, subText, parent) {
+function addMedia (elementType, fileNamesOrPaths, altTexts, subText, parent) {
     parent = parent || bodyDiv;
     const overallParent = addDiv(parent);
     overallParent.className = "portfolioMediaContainer";
-    const mediaParent = addDiv(overallParent);
-    mediaParent.className = "horizontallyCenterChild";
-    const newMediaElement = document.createElement(elementType);
-    mediaParent.appendChild(newMediaElement);
-    newMediaElement.className = "portfolioMedia";
-    if(currentPage){
-        newMediaElement.src = `./${currentPage.subfolderName}/${fileNameOrPath}`;
-    }else{
-        newMediaElement.src = fileNameOrPath;
+    const output = [];
+    const outputOnlyFirstElement = !Array.isArray(fileNamesOrPaths);
+    if(!Array.isArray(fileNamesOrPaths)){
+        fileNamesOrPaths = [fileNamesOrPaths];
     }
-    switch(elementType){
-        case "img":
-            newMediaElement.alt = altText;
-            break;
-        case "video":
-            newMediaElement.controls = true;
-            break;
+    if(!Array.isArray(altTexts)){
+        altTexts = [altTexts];
     }
-    newMediaElement.title = altText;
+    for(let i=0; i<fileNamesOrPaths.length; i++){
+        const mediaParent = addDiv(overallParent);
+        mediaParent.className = "horizontallyCenterChild";
+        const fileNameOrPath = fileNamesOrPaths[i];
+        const altText = altTexts[i];
+        const newMediaElement = document.createElement(elementType);
+        // mediaParent.appendChild(newMediaElement);
+        // newMediaElement.className = "portfolioMedia";
+        if(currentPage){
+            newMediaElement.src = `./${currentPage.subfolderName}/${fileNameOrPath}`;
+        }else{
+            newMediaElement.src = fileNameOrPath;
+        }
+        switch(elementType){
+            case "img":    
+                mediaParent.appendChild(newMediaElement);
+                newMediaElement.className = "portfolioMedia";
+
+                // const newLink = document.createElement("a");
+                // mediaParent.appendChild(newLink);
+                // newLink.className = "portfolioMedia";
+                // newLink.href = newMediaElement.src;
+                // newLink.style = "cursor: zoom-in";
+                // newLink.appendChild(newMediaElement);
+                // newMediaElement.style = "object-fit: contain";
+
+                if(altText){
+                    newMediaElement.alt = altText;
+                }
+
+                // const newLink = document.createElement("a");
+                // newMediaElement.appendChild(newLink);
+                // newLink.href = newMediaElement.src;
+                // newLink.style = "display:inline-block; width: 100%; height: 100%;";
+                
+                // newMediaElement.style = "cursor: zoom-in";
+                // newMediaElement.onclick = () => {
+                //     window.open(newMediaElement.src);
+                // };
+                break;
+            case "video":
+                mediaParent.appendChild(newMediaElement);
+                newMediaElement.className = "portfolioMedia";
+                newMediaElement.controls = true;
+                break;
+        }
+        if(altText){
+            newMediaElement.title = altText;
+        }
+        output.push(newMediaElement);
+    }
     if(subText){
-        const newSubText = addParagraph(subText, overallParent);
+        const subTextParent = addDiv(parent);
+        subTextParent.className = "horizontallyCenterChild";
+        const newSubText = addFormattedParagraph(subText, subTextParent);
         newSubText.className = "portfolioMediaSubtext";
     }
-    return newMediaElement;
+    return outputOnlyFirstElement ? output[0] : output;
 }
 
 function addImage (fileNameOrPath, altText, subText, parent) {
     return addMedia("img", fileNameOrPath, altText, subText, parent);
+}
+
+function addImages (fileNamesOrPaths, altTexts, subText, parent) {
+    return addMedia("img", fileNamesOrPaths, altTexts, subText, parent);
 }
 
 function addVideo (fileNameOrPath, altText, subText, parent) {

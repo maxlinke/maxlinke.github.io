@@ -153,16 +153,18 @@ a:hover {
 .portfolioMediaContainer {
     /* background-color: rgba(0, 0, 0, 0.5); */
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
-    flex-direction: column;
-    margin: 1em;
-    padding: 0.5em;
+    flex-direction: row;
+    margin: 0;
+    padding: 0;
 }
 
 .portfolioMedia {
-    border: 1px solid peru;
+    border: 1px solid color-mix(in srgb, peru, transparent);
+    max-height: 320px;
     max-width: 90%;
-    margin-top: 0;
+    margin: 8px;
 }
 
 .portfolioMediaSubtext {
