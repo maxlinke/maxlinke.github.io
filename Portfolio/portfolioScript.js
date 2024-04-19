@@ -368,13 +368,9 @@ function addMedia (elementType, fileNamesOrPaths, altTexts, subText, parent) {
         altTexts = [altTexts];
     }
     for(let i=0; i<fileNamesOrPaths.length; i++){
-        const mediaParent = addDiv(overallParent);
-        mediaParent.className = "horizontallyCenterChild";
         const fileNameOrPath = fileNamesOrPaths[i];
         const altText = altTexts[i];
         const newMediaElement = document.createElement(elementType);
-        // mediaParent.appendChild(newMediaElement);
-        // newMediaElement.className = "portfolioMedia";
         if(currentPage){
             newMediaElement.src = `./${currentPage.subfolderName}/${fileNameOrPath}`;
         }else{
@@ -382,12 +378,12 @@ function addMedia (elementType, fileNamesOrPaths, altTexts, subText, parent) {
         }
         switch(elementType){
             case "img":    
-                mediaParent.appendChild(newMediaElement);
+                overallParent.appendChild(newMediaElement);
                 newMediaElement.className = "portfolioMedia";
 
                 // link as base (remove the two lines above), completely breaks the image layout but works great otherwise...
                 // const newLink = document.createElement("a");
-                // mediaParent.appendChild(newLink);
+                // overallParent.appendChild(newLink);
                 // newLink.className = "portfolioMedia";
                 // newLink.href = newMediaElement.src;
                 // newLink.style = "cursor: zoom-in";
@@ -410,7 +406,7 @@ function addMedia (elementType, fileNamesOrPaths, altTexts, subText, parent) {
                 };
                 break;
             case "video":
-                mediaParent.appendChild(newMediaElement);
+                overallParent.appendChild(newMediaElement);
                 newMediaElement.className = "portfolioMedia";
                 newMediaElement.controls = true;
                 break;
