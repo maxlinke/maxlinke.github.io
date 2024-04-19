@@ -344,8 +344,15 @@ function addLink (linkText, linkTarget, parent, style) {
 }
 
 function addCodeBlock (text, parent) {
-    // TODO it's a paragraph with a different kind of style
-    alert("TODO");
+    parent = parent || bodyDiv;
+    const containerDiv = document.createElement("div");
+    containerDiv.className = "portfolioCodeContainer";
+    parent.appendChild(containerDiv);
+    const newParagraph = document.createElement("p");
+    newParagraph.className = "portfolioCodeParagraph";
+    containerDiv.appendChild(newParagraph);
+    newParagraph.innerText = text;
+    return newParagraph;
 }
 
 function addMedia (elementType, fileNamesOrPaths, altTexts, subText, parent) {
@@ -378,6 +385,7 @@ function addMedia (elementType, fileNamesOrPaths, altTexts, subText, parent) {
                 mediaParent.appendChild(newMediaElement);
                 newMediaElement.className = "portfolioMedia";
 
+                // link as base (remove the two lines above), completely breaks the image layout but works great otherwise...
                 // const newLink = document.createElement("a");
                 // mediaParent.appendChild(newLink);
                 // newLink.className = "portfolioMedia";
@@ -390,15 +398,16 @@ function addMedia (elementType, fileNamesOrPaths, altTexts, subText, parent) {
                     newMediaElement.alt = altText;
                 }
 
+                // link "on top", doesn't work at all
                 // const newLink = document.createElement("a");
                 // newMediaElement.appendChild(newLink);
                 // newLink.href = newMediaElement.src;
                 // newLink.style = "display:inline-block; width: 100%; height: 100%;";
                 
-                // newMediaElement.style = "cursor: zoom-in";
-                // newMediaElement.onclick = () => {
-                //     window.open(newMediaElement.src);
-                // };
+                newMediaElement.style = "cursor: zoom-in";  // this is not as "correct" as doing with with an "a", but at least i can make it work without completely breaking the layout...
+                newMediaElement.onclick = () => {
+                    window.open(newMediaElement.src);
+                };
                 break;
             case "video":
                 mediaParent.appendChild(newMediaElement);

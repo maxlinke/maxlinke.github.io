@@ -59,5 +59,14 @@ registerPage ("testPage", {
         addParagraph("He marched on the city and immediately attacked it. After defeating a Carthaginian force outside the walls, he pressed attacks on the east gate and the walls. Both were repulsed, but later that day Scipio renewed them. ");
         addVideo("Bossmusic-1.webm", "Test Video", "Video Subtext");
         addParagraph("Hard-pressed, Mago moved men from the north wall, overlooking a broad, shallow lagoon. Anticipating this, a force of 500 men waded the lagoon to scale the north wall unopposed. They fought their way to the east gate, opened it from inside and let in their comrades. The city fell and became a logistics centre for the Roman war effort. By 206 BC the Carthaginians had been expelled from Iberia.");
+        addCodeBlock(`using UnityEngine;
+
+public class MyClass : MonoBehaviour {
+
+    public void Start () {
+        Debug.Log("This is a log!");  // this is a test for code block formatting
+    }
+
+}`);
     }
 });
