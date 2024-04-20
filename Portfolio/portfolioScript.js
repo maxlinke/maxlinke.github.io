@@ -355,86 +355,94 @@ function addCodeBlock (text, parent) {
     return newParagraph;
 }
 
-function addMedia (elementType, fileNamesOrPaths, altTexts, subText, parent) {
+function addMedia (elementInfo, subText, parent) {
     parent = parent || bodyDiv;
     const overallParent = addDiv(parent);
     overallParent.className = "portfolioMediaContainer";
     const output = [];
-    const outputOnlyFirstElement = !Array.isArray(fileNamesOrPaths);
-    if(!Array.isArray(fileNamesOrPaths)){
-        fileNamesOrPaths = [fileNamesOrPaths];
+    const outputOnlyFirstElement = !Array.isArray(elementInfo);
+    if(!Array.isArray(elementInfo)){
+        elementInfo = [elementInfo];
     }
-    if(!Array.isArray(altTexts)){
-        altTexts = [altTexts];
-    }
-    for(let i=0; i<fileNamesOrPaths.length; i++){
-        const fileNameOrPath = fileNamesOrPaths[i];
-        const altText = altTexts[i];
-        const newMediaElement = document.createElement(elementType);
+    for(let i=0; i<elementInfo.length; i++){
+        const newMediaElement = document.createElement(elementInfo[i].type);
         if(currentPage){
-            newMediaElement.src = `./${currentPage.subfolderName}/${fileNameOrPath}`;
+            newMediaElement.src = `./${currentPage.subfolderName}/${elementInfo[i].srcPath}`;
         }else{
-            newMediaElement.src = fileNameOrPath;
+            newMediaElement.src = elementInfo[i].srcPath;
         }
-        switch(elementType){
-            case "img":    
-                overallParent.appendChild(newMediaElement);
-                newMediaElement.className = "portfolioMedia";
-
-                // link as base (remove the two lines above), completely breaks the image layout but works great otherwise...
-                // const newLink = document.createElement("a");
-                // overallParent.appendChild(newLink);
-                // newLink.className = "portfolioMedia";
-                // newLink.href = newMediaElement.src;
-                // newLink.style = "cursor: zoom-in";
-                // newLink.appendChild(newMediaElement);
-                // newMediaElement.style = "object-fit: contain";
-
-                if(altText){
-                    newMediaElement.alt = altText;
+        overallParent.appendChild(newMediaElement);
+        newMediaElement.className = "portfolioMedia";
+        switch(elementInfo[i].type){
+            case "img":
+                if(elementInfo[i].fullSizePath){
+                    // this is not as "correct" as doing with with an "a", but at least i can make it work without completely breaking the layout
+                    // because for some reason, putting the image into an a just breaks things
+                    const onClickOpenPath = currentPage ? `./${currentPage.subfolderName}/${elementInfo[i].fullSizePath}` : elementInfo[i].fullSizePath;
+                    newMediaElement.style = "cursor: zoom-in";
+                    newMediaElement.onclick = () => {
+                        window.open(onClickOpenPath);
+                    };
                 }
-
-                // link "on top", doesn't work at all
-                // const newLink = document.createElement("a");
-                // newMediaElement.appendChild(newLink);
-                // newLink.href = newMediaElement.src;
-                // newLink.style = "display:inline-block; width: 100%; height: 100%;";
-                
-                newMediaElement.style = "cursor: zoom-in";  // this is not as "correct" as doing with with an "a", but at least i can make it work without completely breaking the layout...
-                newMediaElement.onclick = () => {
-                    window.open(newMediaElement.src);
-                };
                 break;
             case "video":
-                overallParent.appendChild(newMediaElement);
-                newMediaElement.className = "portfolioMedia";
                 newMediaElement.controls = true;
                 break;
         }
-        if(altText){
-            newMediaElement.title = altText;
+        if(elementInfo[i].altText){
+            newMediaElement.alt = elementInfo[i].altText;
+            newMediaElement.title = elementInfo[i].altText;
         }
         output.push(newMediaElement);
     }
     if(subText){
-        const subTextParent = addDiv(parent);
-        subTextParent.className = "horizontallyCenterChild";
-        const newSubText = addFormattedParagraph(subText, subTextParent);
+        // const subTextParent = addDiv(parent);
+        // subTextParent.className = "horizontallyCenterChild";
+        const newSubText = addFormattedParagraph(subText, parent);
         newSubText.className = "portfolioMediaSubtext";
     }
     return outputOnlyFirstElement ? output[0] : output;
 }
 
-function addImage (fileNameOrPath, altText, subText, parent) {
-    return addMedia("img", fileNameOrPath, altText, subText, parent);
+function addImage (imgInfo, subText, parent) {
+    return addMedia(
+        {
+            type: "img", 
+            srcPath: imgInfo.thumbnailName ? imgInfo.thumbnailName : imgInfo.fileName, 
+            fullSizePath: imgInfo.thumbnailName ? imgInfo.fileName : undefined,
+            altText: imgInfo.altText
+        },
+        subText, 
+        parent
+    );
 }
 
-function addImages (fileNamesOrPaths, altTexts, subText, parent) {
-    return addMedia("img", fileNamesOrPaths, altTexts, subText, parent);
+function addImages (imgInfo, subText, parent) {
+    return addMedia(
+        imgInfo.map((ii) => { 
+            return {
+                type: "img", 
+                srcPath: ii.thumbnailName ? ii.thumbnailName : ii.fileName,
+                fullSizePath: ii.thumbnailName ? ii.fileName : undefined,
+                altText: ii.altText
+            }
+        }), 
+        subText, 
+        parent
+    );
 }
 
-function addVideo (fileNameOrPath, altText, subText, parent) {
-    return addMedia("video", fileNameOrPath, altText, subText, parent);
+
+function addVideo (vidInfo, subText, parent) {
+    return addMedia(
+        {
+            type: "video", 
+            srcPath: vidInfo.fileName, 
+            altText: vidInfo.altText
+        }, 
+        subText, 
+        parent
+    );
 }
 
 function addList (tag, items, parent) {

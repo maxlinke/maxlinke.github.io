@@ -7,12 +7,15 @@ html{
 body{
     margin: 0;
     padding: 1em;
+    padding-left: 4em;
+    padding-right: 4em;
 }
 
 #verticalPortfolioContainer {
     background-color: #202020;
     color: white;
 	max-width: 60em;
+    min-width: 36em;
 	display: block;
     margin-top: 0;
     margin-bottom: 0;
@@ -36,7 +39,6 @@ h2 {
 h3 {
     font-size: 2em;
     color: peru;
-    /* text-decoration: underline; */
     margin-left: 20px;
     margin-bottom: 1em;
 }
@@ -45,7 +47,6 @@ h4 {
     font-size: 1.5em;
     font-weight: normal;
     color: peru;
-    /* text-decoration: underline; */
     margin-left: 20px;
     margin-top: 2em;
 }
@@ -55,18 +56,14 @@ h4 {
 }
 
 a {
-    /* color: #3394ff;  */
-    /* color: orange */
     color: peru
 }
 
 a:visited {
-    /* color: #0b7af5; */
     color: peru
 }
 
 a:hover {
-    /* color: ivory; */
     color: white
 }
 
@@ -151,7 +148,6 @@ a:hover {
 }
 
 .portfolioMediaContainer {
-    /* background-color: rgba(0, 0, 0, 0.5); */
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -162,16 +158,16 @@ a:hover {
 
 .portfolioMedia {
     border: 1px solid color-mix(in srgb, peru, transparent);
+    margin: 8px;
     max-height: 320px;
     max-width: 90%;
-    margin: 8px;
 }
 
 .portfolioMediaSubtext {
     /* color: rgba(255, 255, 255, 0.5); */
     text-align: center;
     margin-top: 0.5em;
-    margin-bottom: 0;
+    margin-bottom: 2em;
     font-style: italic;
     /* font-size: 80%;
     font-weight: bold; */

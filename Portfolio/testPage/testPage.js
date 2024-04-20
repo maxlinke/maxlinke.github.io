@@ -55,9 +55,19 @@ registerPage ("testPage", {
 
         addSubHeader("Sub header, yo");
         addParagraph("The battle of New Carthage, part of the Second Punic War, took place in early 209 BC when a Roman army under Publius Scipio (bust pictured) assaulted New Carthage, held by a Carthaginian garrison under Mago. Late in 210 BC Scipio took command of Roman forces in Iberia (modern Spain and Portugal) and decided to strike at the regional centre of Carthaginian power: its capital, New Carthage.");
-        addImages(["testBackground.png", "testBackground.png", "testBackground.png", "testBackground.png", "testBackground.png", "testBackground.png", "testBackground.png"], "Test Image", "Test Subtext");
+        const testImg = {
+            fileName: "testBackground.png",
+            altText: "Test Image"
+        };
+        addImages([testImg, testImg], "Test Subtext");
+        const testImgZoomable = {
+            fileName: "testBackground_wide.png",
+            thumbnailName: "testBackground.png",
+            altText: "Test Image"
+        };
+        addImage(testImgZoomable, "This should be zoomable");
         addParagraph("He marched on the city and immediately attacked it. After defeating a Carthaginian force outside the walls, he pressed attacks on the east gate and the walls. Both were repulsed, but later that day Scipio renewed them. ");
-        addVideo("Bossmusic-1.webm", "Test Video", "Video Subtext");
+        addVideo({fileName: "Bossmusic-1.webm", altText: "Test Video"}, "Video Subtext. Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. ");
         addParagraph("Hard-pressed, Mago moved men from the north wall, overlooking a broad, shallow lagoon. Anticipating this, a force of 500 men waded the lagoon to scale the north wall unopposed. They fought their way to the east gate, opened it from inside and let in their comrades. The city fell and became a logistics centre for the Roman war effort. By 206 BC the Carthaginians had been expelled from Iberia.");
         addCodeBlock(`using UnityEngine;
 
