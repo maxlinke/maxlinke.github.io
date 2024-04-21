@@ -1,7 +1,7 @@
 'use strict';
 
 registerPage ("testPage", {
-    // hidden: true,
+    hidden: true,
     title: "Test Page",
     miniDescription: "This is just a test",
     year: 2024,
