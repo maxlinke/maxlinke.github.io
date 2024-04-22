@@ -6,7 +6,7 @@ registerPage("alchemist", {
     year: 2024,
     numberInYear: 40,
     subfolderName: "alchemist",
-    backgroundImageName: "../underConstruction.png",
+    backgroundImageName: "thumbnail_alchemist.png",
     createElements: () => {
         addVideo(
             { fileName: "Alchemistoverview-1.webm", altText: "Quick Alchemist Showcase Video" },
