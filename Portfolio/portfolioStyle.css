@@ -213,4 +213,5 @@ a:hover {
     color: grey;
     margin: 0;
     white-space: preserve;
+    overflow-wrap: break-word;  /* https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_text/Wrapping_breaking_text */
 }
