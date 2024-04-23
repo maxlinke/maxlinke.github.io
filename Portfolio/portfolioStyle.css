@@ -55,11 +55,7 @@ h4 {
     color: inherit;
 }
 
-a {
-    color: peru
-}
-
-a:visited {
+a, a:visited {
     color: peru
 }
 
@@ -102,17 +98,22 @@ a:hover {
 .portfolioPageLinkBoxOverlayTint {
     background-color: rgba(0, 0, 0, 0.5);
     background-blend-mode: multiply;
-    transition: 50ms ease-in-out;
+    /* transition: 50ms ease-in-out; */
 }
 
 .portfolioPageLinkBoxOverlayTint:hover {
     background-color: rgba(0, 0, 0, 0.2);
-    transition: 50ms ease-in-out;
+    /* transition: 50ms ease-in-out; */
 }
 
-.portfolioPageLink {
+.portfolioPageLink, .portfolioPageLink:visited {
     text-decoration: none;
     text-shadow: 2px 2px 5px black;
+    color: #ffa54e; /* peru, but brighter */
+}
+
+.portfolioPageLink:hover {
+    color: white;
 }
 
 .portfolioPageLinkYear {

@@ -13,7 +13,7 @@ registerPage("alchemist", {
             "A quick overview showing what Alchemist can do"
         );
 
-        addFormattedParagraph("I had the privilege to develop a prototype application for [InkyPen](https://inky-pen.com/), combining various pieces of state-of-the-art technology greatly reducing the workload for translators. In just two months, me and my colleague produced a fully working application, although not a very polished one. ");
+        addFormattedParagraph("I had the privilege to develop a prototype application for [InkyPen](https://inky-pen.com/), combining various pieces of state-of-the-art technology greatly reducing the workload for translators. In just two months, my colleague and I produced a fully working application, although not a very polished one. ");
          
         addProjectInfo({
             "Project Type": "WPF Application",
