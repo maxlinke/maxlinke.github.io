@@ -278,20 +278,46 @@ function addFormattedParagraph (rawText, parent) {
                 currentPiece = getNewPiece();
             }
             const rawRemainder = rawText.substring(i);                  // makes for much easier to read code, even if it's potentially inefficient
-            const textEndBracketPos = rawRemainder.indexOf("]");        // if this is -1, there's no text
-            const textLength = textEndBracketPos - 1;                   // if this is <1, there is no text so it's invalid
-            const linkStartParenthesisPos = rawRemainder.indexOf("(");  // if this is -1, there's no link
+            const findNotEscapedCharacterIndex = function (input, characterToFind) {
+                for(let j=0; j<input.length; j++){
+                    if(input.charAt(j) == "\\"){
+                        j++;
+                    }else if(input.charAt(j) == characterToFind){
+                        return j;
+                    }
+                }
+                return -1;
+            };
+            const unescapeEverything = function (input) {
+                let output = "";
+                for(let j=0; j<input.length; j++){
+                    if(input.charAt(j) == "\\"){    // this should work. if we have an escaped backslash, i.e. two backslashes, the first one is skipped and the second one gets appended
+                        j++;
+                    }
+                    output += input.charAt(j);
+                }
+                return output;
+            };
+            const textEndBracketPos = findNotEscapedCharacterIndex(rawRemainder, "]");        // if this is -1, there's no text
+            const textLength = textEndBracketPos - 1;                                         // if this is <1, there is no text so it's invalid
+            const linkStartParenthesisPos = findNotEscapedCharacterIndex(rawRemainder, "(");  // if this is -1, there's no link
             const validLinkStartPos = linkStartParenthesisPos == textEndBracketPos + 1;
-            const linkEndParenthesisPos = rawRemainder.indexOf(")");    // if this is -1, there's no link. 
+            const linkEndParenthesisPos = findNotEscapedCharacterIndex(rawRemainder, ")");    // if this is -1, there's no link. 
             const linkLength = validLinkStartPos 
                                ? linkEndParenthesisPos - linkStartParenthesisPos - 1
                                : 0; 
+            console.log(`textEndBracketPos: ${textEndBracketPos}`);
+            console.log(`textLength: ${textLength}`);
+            console.log(`linkStartParenthesisPos: ${linkStartParenthesisPos}`);
+            console.log(`validLinkStartPos: ${validLinkStartPos}`);
+            console.log(`linkEndParenthesisPos: ${linkEndParenthesisPos}`);
+            console.log(`linkLength: ${linkLength}`);
             if(textLength < 1 || linkLength < 1){
                 currentPiece.text += rawText.charAt(i);
                 continue;    
             }else{
-                currentPiece.text = rawRemainder.substring(1, textEndBracketPos);
-                currentPiece.href = rawRemainder.substring(linkStartParenthesisPos + 1, linkEndParenthesisPos);
+                currentPiece.text = unescapeEverything(rawRemainder.substring(1, textEndBracketPos));
+                currentPiece.href = unescapeEverything(rawRemainder.substring(linkStartParenthesisPos + 1, linkEndParenthesisPos));
                 i += linkEndParenthesisPos;
             }
             continue;
@@ -500,7 +526,10 @@ function addProjectInfo (info, parent) {
         const content = document.createElement("td");
         newRow.appendChild(content);
         content.className = "portfolioProjectInfoTableContent";
-        const categoryValue = info[infoCategory];
+        let categoryValue = info[infoCategory];
+        if(Array.isArray(categoryValue) && categoryValue.length == 1){
+            categoryValue = categoryValue[0];
+        }
         if(Array.isArray(categoryValue)){
             const newList = document.createElement("ul");
             content.appendChild(newList);
