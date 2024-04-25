@@ -248,6 +248,9 @@ function addFormattedParagraph (rawText, parent) {
             2: "b",
             3: ["b", "i"]
         },
+        "|": {
+            2: "code"
+        }
     };
     const activeStyles = [];
     const pieces = [];

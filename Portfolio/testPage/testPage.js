@@ -69,6 +69,7 @@ registerPage ("testPage", {
         addParagraph("He marched on the city and immediately attacked it. After defeating a Carthaginian force outside the walls, he pressed attacks on the east gate and the walls. Both were repulsed, but later that day Scipio renewed them. ");
         addVideo({fileName: "Bossmusic-1.webm", altText: "Test Video"}, "Video Subtext. Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. ");
         addParagraph("Hard-pressed, Mago moved men from the north wall, overlooking a broad, shallow lagoon. Anticipating this, a force of 500 men waded the lagoon to scale the north wall unopposed. They fought their way to the east gate, opened it from inside and let in their comrades. The city fell and became a logistics centre for the Roman war effort. By 206 BC the Carthaginians had been expelled from Iberia.");
+        addFormattedParagraph("||MonoBehaviour|| is the base class from which every Unity script derives. When you use C#, you must explicitly derive from ||MonoBehaviour||. This class doesn't support the null-conditional operator (?.) and the null-coalescing operator (??).");
         addCodeBlock(`using UnityEngine;
 
 public class MyClass : MonoBehaviour {

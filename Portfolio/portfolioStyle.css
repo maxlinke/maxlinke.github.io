@@ -96,20 +96,20 @@ a:hover {
 }
 
 .portfolioPageLinkBoxOverlayTint {
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.667);
     background-blend-mode: multiply;
     /* transition: 50ms ease-in-out; */
 }
 
 .portfolioPageLinkBoxOverlayTint:hover {
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: rgba(0, 0, 0, 0.333);
     /* transition: 50ms ease-in-out; */
 }
 
 .portfolioPageLink, .portfolioPageLink:visited {
     text-decoration: none;
     text-shadow: 2px 2px 5px black;
-    color: #ffa54e; /* peru, but brighter */
+    color: #e69547; /* peru, but a tad brighter for contrast with the background images */
 }
 
 .portfolioPageLink:hover {
@@ -207,6 +207,17 @@ a:hover {
     padding: 0.5em;
     margin-left: 1em;
     margin-right: 1em;
+}
+
+code {
+    font-family: monospace;
+    font-size: 11pt;
+    /* color: cornflowerblue; */
+    color: #AAA;
+    background: #00000020;
+    border: 1px solid #FFFFFF20;
+    border-radius: 4px;
+    padding: 1px 4px 1px 4px ;
 }
 
 .portfolioCodeParagraph {
