@@ -309,12 +309,6 @@ function addFormattedParagraph (rawText, parent) {
             const linkLength = validLinkStartPos 
                                ? linkEndParenthesisPos - linkStartParenthesisPos - 1
                                : 0; 
-            console.log(`textEndBracketPos: ${textEndBracketPos}`);
-            console.log(`textLength: ${textLength}`);
-            console.log(`linkStartParenthesisPos: ${linkStartParenthesisPos}`);
-            console.log(`validLinkStartPos: ${validLinkStartPos}`);
-            console.log(`linkEndParenthesisPos: ${linkEndParenthesisPos}`);
-            console.log(`linkLength: ${linkLength}`);
             if(textLength < 1 || linkLength < 1){
                 currentPiece.text += rawText.charAt(i);
                 continue;    
@@ -548,4 +542,19 @@ function addProjectInfo (info, parent) {
         }
     }
     addSeparatorLine(parent);
+}
+
+function addYouTubeEmbed (info, parent) {
+    parent = parent || bodyDiv;
+    const centerParent = addDiv(parent);
+    centerParent.className = "horizontallyCenterChild";
+    const newIFrame = document.createElement("iframe");
+    newIFrame.className = "portfolioYouTubeEmbed";
+    centerParent.appendChild(newIFrame);
+    newIFrame.src = info.src;
+    newIFrame.width = info.width;
+    newIFrame.height = info.height;
+    newIFrame.altText = "YouTube Video";
+    newIFrame.allowFullscreen = true;
+    return newIFrame;
 }

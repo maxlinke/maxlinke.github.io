@@ -227,3 +227,7 @@ code {
     white-space: preserve;
     overflow-wrap: break-word;  /* https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_text/Wrapping_breaking_text */
 }
+
+.portfolioYouTubeEmbed {
+    border: 1px solid peru;
+}

@@ -8,6 +8,11 @@ registerPage("mesmer", {
     subfolderName: "mesmer",
     backgroundImageName: "../underConstruction.png",
     createElements: () => {
+        addYouTubeEmbed({
+            src: "https://www.youtube.com/embed/fettovMEzVs",
+            width: "516",
+            height: "312"
+        });
         addFormattedParagraph("TODO");
     }
 });

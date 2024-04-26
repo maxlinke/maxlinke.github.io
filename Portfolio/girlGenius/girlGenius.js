@@ -8,6 +8,11 @@ registerPage("girlGenius", {
     subfolderName: "girlGenius",
     backgroundImageName: "../underConstruction.png",
     createElements: () => {
+        addYouTubeEmbed({
+            src: "https://www.youtube.com/embed/cSRddBKfEiQ",
+            width: 560,
+            height: 315
+        });
         addFormattedParagraph("TODO");
         // a few ideas for sections
         // - gg cutscene system
