@@ -395,7 +395,7 @@ function addMedia (elementInfo, subText, parent) {
             newMediaElement.src = elementInfo[i].srcPath;
         }
         overallParent.appendChild(newMediaElement);
-        newMediaElement.className = "portfolioMedia";
+        newMediaElement.className = elementInfo[i].dontLimitMaxHeight ? "portfolioMediaNoMaxHeight" : "portfolioMedia";
         switch(elementInfo[i].type){
             case "img":
                 if(elementInfo[i].fullSizePath){
@@ -433,7 +433,8 @@ function addImage (imgInfo, subText, parent) {
             type: "img", 
             srcPath: imgInfo.thumbnailName ? imgInfo.thumbnailName : imgInfo.fileName, 
             fullSizePath: imgInfo.thumbnailName ? imgInfo.fileName : undefined,
-            altText: imgInfo.altText
+            altText: imgInfo.altText,
+            dontLimitMaxHeight: imgInfo.dontLimitMaxHeight
         },
         subText, 
         parent
@@ -447,7 +448,8 @@ function addImages (imgInfo, subText, parent) {
                 type: "img", 
                 srcPath: ii.thumbnailName ? ii.thumbnailName : ii.fileName,
                 fullSizePath: ii.thumbnailName ? ii.fileName : undefined,
-                altText: ii.altText
+                altText: ii.altText,
+                dontLimitMaxHeight: ii.dontLimitMaxHeight
             }
         }), 
         subText, 
@@ -461,7 +463,8 @@ function addVideo (vidInfo, subText, parent) {
         {
             type: "video", 
             srcPath: vidInfo.fileName, 
-            altText: vidInfo.altText
+            altText: vidInfo.altText,
+            dontLimitMaxHeight: vidInfo.dontLimitMaxHeight
         }, 
         subText, 
         parent

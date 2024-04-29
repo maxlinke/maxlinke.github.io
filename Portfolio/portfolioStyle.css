@@ -164,6 +164,13 @@ a:hover {
     max-width: 90%;
 }
 
+.portfolioMediaNoMaxHeight {
+    border: 1px solid color-mix(in srgb, peru, transparent);
+    margin: 8px;
+    /* max-height: 320px; */
+    max-width: 90%;
+}
+
 .portfolioMediaSubtext {
     /* color: rgba(255, 255, 255, 0.5); */
     text-align: center;
