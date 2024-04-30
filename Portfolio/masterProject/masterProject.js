@@ -6,7 +6,7 @@ registerPage("masterProject", {
     year: 2023,
     numberInYear: 80,
     subfolderName: "masterProject",
-    backgroundImageName: "masterProject_thumbnail.png",
+    backgroundImageName: "masterproject_thumbnail.png",
     createElements: () => {
         addVideo(
             {fileName: "Overview Masterproject-1.webm", altText: "A quick overview over the essentials of my framework" },
