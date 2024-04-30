@@ -174,8 +174,7 @@ a:hover {
 .portfolioMediaSubtext {
     /* color: rgba(255, 255, 255, 0.5); */
     text-align: center;
-    margin-top: 0.5em;
-    margin-bottom: 2em;
+    margin: 0.5em 2em 2em 2em;
     font-style: italic;
     /* font-size: 80%;
     font-weight: bold; */

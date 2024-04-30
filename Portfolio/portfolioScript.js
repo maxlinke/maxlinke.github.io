@@ -389,10 +389,10 @@ function addMedia (elementInfo, subText, parent) {
     }
     for(let i=0; i<elementInfo.length; i++){
         const newMediaElement = document.createElement(elementInfo[i].type);
-        if(currentPage){
-            newMediaElement.src = `./${currentPage.subfolderName}/${elementInfo[i].srcPath}`;
-        }else{
+        if(!currentPage || elementInfo[i].srcPath.startsWith("http://") || elementInfo[i].srcPath.startsWith("https://")){
             newMediaElement.src = elementInfo[i].srcPath;
+        }else{
+            newMediaElement.src = `./${currentPage.subfolderName}/${elementInfo[i].srcPath}`;
         }
         overallParent.appendChild(newMediaElement);
         newMediaElement.className = elementInfo[i].dontLimitMaxHeight ? "portfolioMediaNoMaxHeight" : "portfolioMedia";
