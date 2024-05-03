@@ -59,7 +59,7 @@ registerPage("masterProject", {
     }
 }`);
         addFormattedParagraph("The main effort when writing a game in this way will be spent on the game state, extending ||GameState<TGameState, TMove>|| or ||GameState<TGameState, TMove, TPlayerState>||, which has to generate all possible moves, so that the agents only need to pick a move, not generate one themselves. ");
-        addFormattedParagraph("To write easily agents using game tree search, I also added a generic N-player implementation combining Alpha-Beta-Pruning and Expectiminimax. This makes it possible to even analyze games where outcomes of moves are non deterministic, like with dice rolls or coin flips. ");
+        addFormattedParagraph("To easily write agents using game tree search, I also added a generic N-player implementation combining Alpha-Beta-Pruning and Expectiminimax. This makes it possible to even analyze games where outcomes of moves are non deterministic, like with dice rolls or coin flips. ");
 
         addSubHeader("Running a tournament");
         addImage(

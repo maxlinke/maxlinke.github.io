@@ -23,3 +23,12 @@ a{
 	color: #48f;
 	display: block;
 }
+
+#portfolioLink {
+    display: inline; 
+    animation: pulsingGlow 4s infinite;
+}
+
+@keyframes pulsingGlow {
+    50% { text-shadow: 0px 0px 64px #48f; }
+}
