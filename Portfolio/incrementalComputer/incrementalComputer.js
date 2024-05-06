@@ -28,7 +28,7 @@ registerPage ("incrementalComputer", {
                 "[UniRX-Plugin \\(github.com\\)](https://github.com/neuecc/UniRx)"
             ],
             "Repository": "[GT3-Incremental-Computer \\(github.com\\)](https://github.com/maxlinke/GT3-Incremental-Computer)",
-            "Playable Build": "[GT3 Incremental Game](https://maxlinke.github.io/WebGL/Incremental Computer WebGL/index.html)",
+            "Playable Build": "[GT3 Incremental Game](https://maxlinke.github.io/WebGL/IncrementalComputerWebGL/index.html)",
             "Report": "[gt3_report_max_linke.pdf](incrementalComputer/gt3_report_max_linke.pdf)"
         });
 
@@ -66,6 +66,6 @@ void OnGUI () {
         
         addSubHeader("Closing remarks");
         addFormattedParagraph("It only took me pretty much one month exactly to go from start to finish with this game, probably owing to my familiarity with Unity and clear plan from the outset. The only real issue is that it's not a very good incremental game, because those can usually run for a LONG time being mostly driven by formulae, while my game has discrete steps, which of course only go so far as I put them in. Other than that, I am pretty proud of what I created. ");
-        addFormattedParagraph("If you want to play it, there is a [slightly reduced WebGL-build](https://maxlinke.github.io/WebGL/Incremental Computer WebGL/index.html), which is only missing the saving and loading feature. There's also [the report I submitted](incrementalComputer/gt3_report_max_linke.pdf), which goes into a bit more detail in all the parts. And not to forget, [the repository](https://github.com/maxlinke/GT3-Incremental-Computer) is publicly accessible, so if you really want to judge what I consider to be \"clean code\" for yourself, you can. ");
+        addFormattedParagraph("If you want to play it, there is a [slightly reduced WebGL-build](https://maxlinke.github.io/WebGL/IncrementalComputerWebGL/index.html), which is only missing the saving and loading feature. There's also [the report I submitted](incrementalComputer/gt3_report_max_linke.pdf), which goes into a bit more detail in all the parts. And not to forget, [the repository](https://github.com/maxlinke/GT3-Incremental-Computer) is publicly accessible, so if you really want to judge what I consider to be \"clean code\" for yourself, you can. ");
     }
 });
