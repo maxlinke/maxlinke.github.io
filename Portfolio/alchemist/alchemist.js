@@ -110,8 +110,5 @@ registerPage("alchemist", {
         bitmap.Unlock();
     }
 }`);
-
-        addSubHeader("Ending the project");
-        addFormattedParagraph("As the two-month period drew to a close, we had not just reached the set goal but exceeded what was expected of us. We had spent the preceding days fixing various bugs and polishing the prototype as much as possible, but unfortunately, there was no funding at the time to continue working on it. ");
     }
 });

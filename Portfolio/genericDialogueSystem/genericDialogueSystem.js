@@ -66,7 +66,7 @@ static DialogueLine CreateNewLineOfTypeWithConstructorParameter (System.Type new
     return constructorInfo.Invoke(new object[] { constructorParameter }) as DialogueLine;
 }`);
 
-        addSubHeader("Leaving it unfinished");
-        addFormattedParagraph("While the package is already usable and provides a lot of utility that would have to be programmed by someone probably less familiar with making a good dialogue system, several fairly important parts are still missing, such as built in support for localization. Addressables is already supported via compiler directives, but Unity's localization package isn't, even though I did tests to see how I could make it work and found it to be a lot more user friendly than when I tested it originally for Girl Genius. However, with Rain being in some financial trouble, they couldn't pay me any more to develop the package further and as such, it sits unfinished. ");
+        addSubHeader("Things left to do");
+        addFormattedParagraph("While the package is already usable and provides a lot of utility that would have to be programmed by someone probably less familiar with making a good dialogue system, several fairly important parts are still missing, such as built in support for localization. Addressables is already supported via compiler directives, but Unity's localization package isn't, even though I did tests to see how I could make it work and found it to be a lot more user friendly than when I tested it originally for Girl Genius. ");
     }
 });
