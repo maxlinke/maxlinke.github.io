@@ -8,7 +8,7 @@ registerPage ("genericDialogueSystem", {
     subfolderName: "genericDialogueSystem",
     backgroundImageName: "genericDialogueSystem_thumbnail.png",
     createElements: function () {
-        addFormattedParagraph("The dialogue system I build for [Girl Genius](#girlGenius) was apparently so well liked by the people using it, that the people from the other team at Rain took note. It was however not written with being used in other games in mind, so rather than trying to refactor it, I got to apply my knowledge and build a new, better dialogue system from scratch and turn it into a proper package. ");
+        addFormattedParagraph("The dialogue system I built for [Girl Genius](#girlGenius) was apparently so well liked by the people using it, that the people from the other team at Rain took note. It was however not written with being used in other games in mind, so rather than trying to refactor it, I got to apply my knowledge and build a new, better dialogue system from scratch and turn it into a proper package. ");
 
         addProjectInfo({
             "Project Type": "Unity Package",
