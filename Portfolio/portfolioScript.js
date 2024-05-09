@@ -413,8 +413,8 @@ function addMedia (elementInfo, subText, parent) {
                 break;
         }
         if(elementInfo[i].altText){
-            newMediaElement.alt = elementInfo[i].altText;
-            newMediaElement.title = elementInfo[i].altText;
+            newMediaElement.alt = elementInfo[i].altText;       // alt text is useful if someone can't see the media...
+            // newMediaElement.title = elementInfo[i].altText;  // ... but the popup is just annoying when it's there
         }
         output.push(newMediaElement);
     }
