@@ -28,12 +28,15 @@ body{
 
 h1 {
     margin: 0;
+    font-size: 3em;
+    font-variant: small-caps;
 }
 
 h2 {
-    font-size: 1em;
-    font-weight: normal;
-    color: rgba(255, 255, 255, 0.5);
+    margin: 0;
+    font-size: 1.5em;
+    font-variant: small-caps;
+    opacity: 0.5;
 }
 
 h3 {
@@ -55,6 +58,12 @@ h4 {
     color: inherit;
 }
 
+#portfolioListLabel {
+    opacity: 0.5;
+    margin-top: -0.5em;
+    margin-bottom: 1.5em;
+}
+
 a, a:visited {
     color: peru
 }
@@ -66,6 +75,7 @@ a:hover {
 #portfolioHeader {
     margin-left: 1em;
     margin-right: 1em;
+    margin-bottom: -10px;
 }
 
 #portfolioHeaderBodySeparator, .portfolioPageSeparator {

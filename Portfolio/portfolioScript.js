@@ -65,6 +65,8 @@ function regeneratePage () {
     }else{
         currentPage = null;
         showingMainList = true;
+        const listIntro = addParagraph("An overview of some of the things I've worked on:", bodyDiv);
+        listIntro.id = "portfolioListLabel";
         const pageIdsSortedByYear = getPortfolioPageIdsSorted();
         for(let pageId of pageIdsSortedByYear){
             const page = portfolioPages[pageId];
