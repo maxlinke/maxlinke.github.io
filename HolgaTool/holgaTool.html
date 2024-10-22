@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Holga Tool</title>
+    </head>
+    <body>
+        <h1>Holga Tool</h1>
+        <br>
+        <p>This tool is a really quickly thrown together calculator for how many turns are needed to advance film one frame on a Holga 120N or similar camera. When shooting 135 film in it, there is no backing paper with numbers printed on, plus the window needs to be taped up to prevent unwanted exposure anyways.</p>
+        <br>
+        <label for="spoolDiameterInput">Spool Diameter (mm):</label>
+        <input type="number" id="spoolDiameterInput" value="11.3" max="20">
+        <br>
+        <label for="filmThicknessInput">Film Thickness (mm):</label>
+        <input type="number" id="filmThicknessInput" value="0.14" max="0.5">
+        <br>
+        <label for="filmLengthInput">Film Length (m):</label>
+        <input type="number" id="filmLengthInput" value="1.65" max="2">
+        <br>
+        <label for="frameWidthInput">Frame Width (incl Spacing) (mm):</label>
+        <input type="number" id="frameWidthInput" value="60" max="300">
+        <br>
+        <button id="submitButton">Calculate</button>
+        <br>
+        <div id="resultsContainer"></div>
+    </body>
+    <script>
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const spoolDiameterInput = document.getElementById("spoolDiameterInput");
+            const filmThicknessInput = document.getElementById("filmThicknessInput");
+            const filmLengthInput = document.getElementById("filmLengthInput");
+            const frameWidthInput = document.getElementById("frameWidthInput");
+            const submitButton = document.getElementById("submitButton");
+            const resultsContainer = document.getElementById("resultsContainer");
+
+            const numberInputs = [
+                spoolDiameterInput,
+                filmThicknessInput,
+                filmLengthInput,
+                frameWidthInput
+            ];
+
+            for(const numberInput of numberInputs){
+                numberInput.min = 0;
+                numberInput.step = 0.1;
+            }
+
+            const calculateAndDisplayResults = function () {
+                resultsContainer.replaceChildren();
+
+                const resultsLabel = document.createElement("h2");
+                resultsContainer.appendChild(resultsLabel);
+                resultsLabel.innerHTML = "Results";
+
+                const resultsTable = document.createElement("table");
+                resultsContainer.appendChild(resultsTable);
+
+                const tableLabelRow = document.createElement("tr");
+                resultsTable.appendChild(tableLabelRow);
+
+                const appendHeader = function (text) {
+                    const newHeader = document.createElement("th");
+                    tableLabelRow.appendChild(newHeader);
+                    newHeader.innerText = text;
+                };
+
+                appendHeader("Frame | ");
+                appendHeader("Total Turns | ");
+                appendHeader("Turn to next");
+
+                const appendEntry = function (parent, text) {
+                    const newEntry = document.createElement("td");
+                    parent.appendChild(newEntry);
+                    newEntry.innerText = text;
+                };
+
+                const divisions = 24;
+
+                let lengthRemaining = 1000 * filmLengthInput.value;
+                let wholeTurns = 0;
+                let stepsThisTurn = 0;
+                let currentDiameter = Number(spoolDiameterInput.value);
+                let stepDistance = (currentDiameter * 3.1415) / divisions;
+                let frameCounter = 0;
+                let lengthToNextFrame = 0;
+                let currentRow = null;
+                let lastFrameTotalTurns = 0
+                while(lengthRemaining >= 0){
+                    if(lengthToNextFrame <= 0){
+                        frameCounter += 1;
+                        const totalTurns = wholeTurns + (stepsThisTurn / divisions);
+                        if(currentRow != null){
+                            appendEntry(currentRow, (totalTurns - lastFrameTotalTurns).toFixed(3));
+                        }
+
+                        if(lengthRemaining < Number(frameWidthInput.value)){
+                            break;
+                        }
+
+                        currentRow = document.createElement("tr");
+                        resultsTable.appendChild(currentRow);
+                        
+                        appendEntry(currentRow, frameCounter);
+                        appendEntry(currentRow, totalTurns.toFixed(3));
+                        
+                        lengthToNextFrame += Number(frameWidthInput.value);
+                        lastFrameTotalTurns = totalTurns;
+                        
+                        const debugObj = {
+                            wholeTurns: wholeTurns,
+                            stepsThisTurn: stepsThisTurn,
+                            lengthRemaining: lengthRemaining,
+                            lengthToNextFrame: lengthToNextFrame,
+                            currentDiameter: currentDiameter,
+                            stepDistance: stepDistance,
+                            frameCounter: frameCounter
+                        };
+                        console.log(debugObj);
+                    }
+                    lengthRemaining -= stepDistance;
+                    lengthToNextFrame -= stepDistance;
+                    stepsThisTurn++;
+                    if(stepsThisTurn >= divisions){
+                        wholeTurns += 1;
+                        stepsThisTurn = 0;
+                        currentDiameter += 2 * filmThicknessInput.value;
+                        stepDistance = (currentDiameter * 3.1415) / divisions;
+                    }
+                }
+            }
+
+            submitButton.addEventListener("click", calculateAndDisplayResults);
+            // calculateAndDisplayResults();
+        });
+    </script>
+</html>
